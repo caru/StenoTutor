@@ -23,10 +23,7 @@ Installation
 * Run Plover. It can be disabled, but it must be running.
 
 1. Linux - 
-Make StenoTutor script executable:
-     chmod +x StenoTutor
-Run StenoTutor:
-    ./StenoTutor
+Make "StenoTutor" script executable, either on command line (chmod +x StenoTutor) or by right-clicking it and changing file permissions. Finally, run StenoTutor either from command line (./StenoTutor) or by double-clicking it.
 
 2. Windows 64 bit - 
 Double-click StenoTutor.bat (if the window is too little, exiting and then running it again should work)
