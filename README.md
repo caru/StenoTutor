@@ -16,7 +16,9 @@ The StenoTutor application was initially developed and published by Emanuele Car
 Installation
 ------------
 
-* Download and extract binary distribution in a directory of your choice.
+* Make sure the a recent version of Java is installed
+* Download [the repository zip file](https://github.com/caru/StenoTutor/archive/master.zip) in a directory of your choice.
+* Extract the folder corresponding to your system on your hard drive. For example, if you use Linux 32-bit, extract the folder named "application.linux32/"
 * Optionally tweak session.properties in "data/" subdirectory.
 * Run Plover. It can be disabled, but it must be running.
 
@@ -26,8 +28,11 @@ Make StenoTutor script executable:
 Run StenoTutor:
     ./StenoTutor
 
-2. Windows - 
-Double-click StenoTutor.bat
+2. Windows 64 bit - 
+Double-click StenoTutor.bat (if the window is too little, exiting and then running it again should work)
+
+2. Windows 32 bit - 
+Double-click StenoTutor.exe (if the window is too little, quitting and then running it again should work)
 
 3. Mac - 
 Follow readme.txt
