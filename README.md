@@ -20,16 +20,16 @@ Installation
 * Optionally tweak session.properties in "data/" subdirectory.
 * Run Plover. It can be disabled, but it must be running.
 
-1. Linux
+1. Linux - 
 Make StenoTutor script executable:
      chmod +x StenoTutor
 Run StenoTutor:
     ./StenoTutor
 
-2. Windows 
+2. Windows - 
 Double-click StenoTutor.bat
 
-3. Mac
+3. Mac - 
 Follow readme.txt
 
 Features
