@@ -391,8 +391,6 @@ public void levelUp() {
     i++;
   }
   currentLevel++;
-  // TODO: show in GUI
-  println("Leveled up, current level: " + currentLevel + " - Total unlocked words: " + unlockedWords);
 }
 
 // Compute the next word. Slow-typed words have more possibilities
@@ -418,10 +416,6 @@ public void setNextWordIndex() {
   
   // Fetch a random word from the word pool
   currentWordIndex = wordPool.get((int) random(0, wordPool.size()));
-  
-  // TODO: show in GUI text
-  //println((int) map(wordStats.get(currentWordIndex).getWordPenalty(),currentMinPenalty, currentMaxPenalty, 1, 100));
-  println((int) wordStats.get(currentWordIndex).getAvgWpm());
 }
 
 // Update current min and max penalty limits
