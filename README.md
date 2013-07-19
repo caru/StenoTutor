@@ -61,7 +61,6 @@ Planned Features and Future Enhancements
 * Alphabet training mode
 * Sentence training mode
 * Options to show/hide the various info and features
-* In word training mode, add an option to pre-compute and show multiple words at a time, to provide a typing experience similar to many online multiplayer typing games and more similar to real world typing
 * Save session statistics in txt files
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
 * Font colors and GUI colors configuration file
