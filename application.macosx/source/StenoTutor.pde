@@ -26,6 +26,7 @@ int minLevelUpWordWpm;
 int minLevelUpTotalWpm;
 int wordAvgSamples;
 int wordStartAvgWpm;
+boolean isSingleWordBuffer;
 
 // Used to read Plover log
 BufferedReader logReader = null;
@@ -47,6 +48,9 @@ String blkDictionaryFilePath;
 
 // Input buffer
 String buffer = "";
+
+// Target line buffer
+NextWordsBuffer nextWordsBuffer;
 
 // Dictionary of current lesson
 ArrayList<Word> dictionary;
@@ -88,10 +92,6 @@ int typedWords = 0;
 int worstWordWpm = 0;
 String worstWord = "";
 
-// Current min and max penalties, checked at each stroke for smart training purposes
-long currentMinPenalty;
-long currentMaxPenalty;
-
 // Stores the previous stroke, needed when redrawing text info
 Stroke previousStroke = new Stroke();
 
@@ -100,9 +100,13 @@ boolean ctrlKeyReleased = false;
 
 /*
  * ---------------------
- * TEXT LAYOUT VARIABLES
+ * GUI LAYOUT VARIABLES
  * ---------------------
- */ 
+ */
+int frameSizeX = 700;
+int frameSizeY = 280;
+int defaultFontSize = 20;
+int mainTextFontSize = 24;
 int baseX = 60;
 int baseY = 70;
 int labelValueSpace = 20;
@@ -157,8 +161,12 @@ void setup() {
     wordStats.add(new WordStats());
   }
   
+  // Initialize target line buffer and set next word index
+  nextWordsBuffer = new NextWordsBuffer(frameSizeX - nextWordX);
+  currentWordIndex = nextWordsBuffer.getCurrentWordIndex();
+  
   // Configure display size
-  size(600, 280);
+  size(frameSizeX, frameSizeY);
   
   // Paint background and show text info
   background(25);
@@ -230,6 +238,7 @@ void readSessionConfig() {
   minLevelUpTotalWpm = Integer.valueOf(properties.getProperty("session.minLevelUpTotalWpm", "" + 20));
   wordAvgSamples = Integer.valueOf(properties.getProperty("session.wordAvgSamples", "" + 10));
   wordStartAvgWpm = Integer.valueOf(properties.getProperty("session.wordStartAvgWpm", "" + 20));
+  isSingleWordBuffer = Boolean.valueOf(properties.getProperty("session.isSingleWordBuffer", "false"));
 }
 
 // Automatically find Plover log file path
@@ -271,11 +280,11 @@ long getElapsedTime() {
 void showTextInfo(Stroke stroke) {
   textAlign(RIGHT);
   fill(250);
-  textFont(font,30);
-  text("Next word:", nextWordX - labelValueSpace, nextWordY);
+  textFont(font,mainTextFontSize);
+  text("Target words:", nextWordX - labelValueSpace, nextWordY);
   text("Input:", bufferX - labelValueSpace, bufferY);
   fill(200);
-  textFont(font,20);
+  textFont(font,defaultFontSize);
   text("Next chord:", nextChordX - labelValueSpace, nextChordY);
   text("Typed chord:", lastChordX - labelValueSpace, lastChordY);
   text("WPM:", wpmX - labelValueSpace, wpmY);
@@ -288,11 +297,11 @@ void showTextInfo(Stroke stroke) {
   text("Worst w:", worstWordX - labelValueSpace, worstWordY);
   textAlign(LEFT);
   fill(250);
-  textFont(font,30);
-  text(dictionary.get(currentWordIndex).word, nextWordX, nextWordY);
+  textFont(font,mainTextFontSize);
+  nextWordsBuffer.showText(nextWordX, nextWordY);
   text(buffer.trim() + (System.currentTimeMillis() % 1000 < 500 ? "_" : ""), bufferX, bufferY);
   fill(200);
-  textFont(font, 20);
+  textFont(font, defaultFontSize);
   text(dictionary.get(currentWordIndex).stroke, nextChordX, nextChordY);
   text(stroke.isDelete ? "*" : buffer.equals("") ? "" : stroke.stroke, lastChordX, lastChordY);
   text(isLessonStarted ? (int) (typedWords / (getElapsedTime() / 60000.0)) : 0, wpmX, wpmY);
@@ -318,7 +327,7 @@ void checkBuffer(boolean forceNextWord) {
     lastTypedWordTime = typeTime;
     typedWords++;
     checkLevelUp();
-    setNextWordIndex();
+    currentWordIndex = nextWordsBuffer.getNextWordIndex();
     updateWorstWord();
   }
 }
@@ -372,42 +381,6 @@ void levelUp() {
     i++;
   }
   currentLevel++;
-}
-
-// Compute the next word. Slow-typed words have more possibilities
-// to show up than fast-typed ones
-void setNextWordIndex() {
-  // Create word pool
-  ArrayList<Integer> wordPool = new ArrayList<Integer>();
-  
-  // Update current min and max penalty limits
-  updatePenaltyLimits();
-  
-  // For each unlocked word, if it's not the current one and it
-  // isn't blacklisted, add it to the pool a number of times,
-  // based on word penalty.
-  for (int i = 0; i < startBaseWords + unlockedWords; i++) {
-    if (i == currentWordIndex || wordsBlacklist.contains(dictionary.get(i).word)) continue;
-    if (i == currentWordIndex) continue;
-    else {
-      int penalty = (int) map(wordStats.get(i).getWordPenalty(), currentMinPenalty, currentMaxPenalty, 1, 100);
-      for (int j = 0; j < penalty; j++) wordPool.add(i);
-    }
-  }
-  
-  // Fetch a random word from the word pool
-  currentWordIndex = wordPool.get((int) random(0, wordPool.size()));
-}
-
-// Update current min and max penalty limits
-void updatePenaltyLimits() {
-  currentMinPenalty = 1000000000;
-  currentMaxPenalty = 0;
-  for (int i = 0; i < startBaseWords + unlockedWords - 1; i++) {
-    long penalty = wordStats.get(i).getWordPenalty();
-    if (currentMinPenalty > penalty) currentMinPenalty = penalty;
-    if (currentMaxPenalty < penalty) currentMaxPenalty = penalty;
-  }
 }
 
 // Update the input buffer according to the passed stroke
@@ -634,6 +607,123 @@ private class WordStats {
       return timePenalty * timePenalty / 2000 * timePenalty;
     } else {
       return 9999999999L;
+    }
+  }
+}
+
+// Represents a multi-word buffer containing the next target line
+private class NextWordsBuffer {
+  // A list of integers containing all the words in the line
+  ArrayList<Integer> nextWords = new ArrayList<Integer>();
+  int highlightedWordIndex;
+  int bufferSize;
+  
+  // Default constructor
+  NextWordsBuffer(int bufferSize) {
+    this.bufferSize = bufferSize;
+    fillNewLine(1);
+  }
+  
+  // Get current word dictionary index
+  int getCurrentWordIndex() {
+    return nextWords.get(highlightedWordIndex);
+  }
+  
+  // Get next word dictionary index
+  int getNextWordIndex() {
+    highlightedWordIndex++;
+    if (highlightedWordIndex < nextWords.size()) {
+      return nextWords.get(highlightedWordIndex);
+    } else {
+      fillNewLine(nextWords.get(highlightedWordIndex-1));
+      return getCurrentWordIndex();
+    }
+  }
+  
+  // Fill a new line
+  void fillNewLine(int previousWordIndex) {
+    int lastWordIndex = previousWordIndex;
+    
+    // Clear word list
+    nextWords.clear();
+    
+    // Store the used space
+    float usedBufferSize = 0;
+    
+    // Calculate current min and max penalty limits
+    long[] penaltyLimits = calculatePenaltyLimits();
+    
+    // Fill the new line as long as there is space in the buffer
+    while (usedBufferSize < bufferSize) {
+      int nextWordIndex = getNextWordFromPool(lastWordIndex, penaltyLimits);
+      nextWords.add(nextWordIndex);
+      lastWordIndex = nextWordIndex;
+      
+      textFont(font, mainTextFontSize);
+      usedBufferSize += textWidth(dictionary.get(nextWordIndex).word.trim() + " ");
+      
+      // If only one word is required, break the loop
+      if(isSingleWordBuffer) break;
+    }
+    
+    // Remove this word because it probably finishes off-screen,
+    // unless it's the only one
+    if(nextWords.size() > 1) nextWords.remove(nextWords.size()-1);
+    
+    // Highlight first word
+    highlightedWordIndex = 0;
+  }
+  
+  // Compute the next word. Slow-typed words have more possibilities
+  // to show up than fast-typed ones
+  int getNextWordFromPool(int previousWordIndex, long[] penaltyLimits) {
+    // Create word pool
+    ArrayList<Integer> wordPool = new ArrayList<Integer>();
+
+    // For each unlocked word, if it's not the current one and it
+    // isn't blacklisted, add it to the pool a number of times,
+    // based on word penalty.
+    for (int i = 0; i < startBaseWords + unlockedWords; i++) {
+      if (i == previousWordIndex || wordsBlacklist.contains(dictionary.get(i).word)) continue;
+      else {
+        int penalty = (int) map(wordStats.get(i).getWordPenalty(), penaltyLimits[0], penaltyLimits[1], 1, 100);
+        for (int j = 0; j < penalty; j++) wordPool.add(i);
+      }
+    }
+  
+  // Fetch a random word from the word pool
+  return wordPool.get((int) random(0, wordPool.size()));
+  }
+
+  // Calculate current min and max penalty limits
+  long[] calculatePenaltyLimits() {
+    long currentMinPenalty = 1000000000;
+    long currentMaxPenalty = 0;
+    for (int i = 0; i < startBaseWords + unlockedWords - 1; i++) {
+      if (i == currentWordIndex || wordsBlacklist.contains(dictionary.get(i).word)) continue;
+      long penalty = wordStats.get(i).getWordPenalty();
+      if (currentMinPenalty > penalty) currentMinPenalty = penalty;
+      if (currentMaxPenalty < penalty) currentMaxPenalty = penalty;
+    }
+    return new long[] {currentMinPenalty, currentMaxPenalty};
+  }
+  
+  void showText(int x, int y) {
+    float currentX = x;
+    textFont(font, mainTextFontSize);
+    for (int i = 0; i < nextWords.size(); i++) {
+      int index = nextWords.get(i);
+      String word = dictionary.get(index).word;
+      if (i == highlightedWordIndex) {
+        noFill();
+        stroke(250, 200, 100);
+        //rect(currentX - (textWidth(" ") / 2), y - mainTextFontSize, textWidth(word + " "), mainTextFontSize + 7, 5);
+        line(currentX, y + mainTextFontSize / 5, currentX + textWidth(word), y + mainTextFontSize / 5);
+        fill(250, 200, 100);
+      }
+      text(word, currentX, y);
+      if (i == highlightedWordIndex) fill(250);
+      currentX += textWidth(word + " ");
     }
   }
 }

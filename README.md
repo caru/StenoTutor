@@ -44,6 +44,7 @@ Features
 * Custom lessons can be created in "data/lesson/" directory.
 * Session parameters can be customized in "data/session.properties".
 * Errors must be manually deleted by the student with '*' key. This allows StenoTutor to provide an experience more similar to real world typing.
+* Show one target word at a time or fill the line and complete it. You can configure this in session.properties, property name session.isSingleWordBuffer
 
 Known Bugs
 ----------
@@ -65,3 +66,19 @@ Planned Features and Future Enhancements
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
 * Font colors and GUI colors configuration file
 * GUI interface, eg: buttons
+
+Changelog
+---------
+
+*Version 0.0.2*
+* Show one target word at a time or fill the line and complete it. You can configure this in session.properties, property name session.isSingleWordBuffer
+
+*Version 0.0.1*
+* Smart word selection, slower-typed words show up more often.
+* Blacklist specific words (press CONTROL to blacklist the current word), which is saved on disk at each new addition.
+* Display: next chord, next word, input buffer, input chord, current word last-x-average wpm, session wpm, level, timer, total unlocked words, worst word and worst word WPM.
+* Incremental word presentation: you can configure how many words to show at the beginning of the lession, how many to add at each level up, minimum average WPM to level up, minimum single word average WPM to level up, how many of the latest samples to use for word average WPM calculation and word start average WPM.
+* There is no leveling down, StenoTutor will always make sure that you mainly work on the words that currently put you into trouble, which are usually the new ones.
+* Custom lessons can be created in "data/lesson/" directory.
+* Session parameters can be customized in "data/session.properties".
+* Errors must be manually deleted by the student with '*' key. This allows StenoTutor to provide an experience more similar to real world typing.
