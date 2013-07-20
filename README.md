@@ -37,6 +37,7 @@ Follow readme.txt
 Features
 --------
 * Smart word selection, slower-typed words show up more often.
+* Speech syntesis powered stats and new level announcements
 * Blacklist specific words (press CONTROL to blacklist the current word), which is saved on disk at each new addition.
 * Pause/resume current lesson with TAB key. You can resume with any key or chord, and the stroke will be printed in the input buffer.
 * Display: next chord, next word, input buffer, input chord, current word last-x-average wpm, session wpm, level, timer, total unlocked words, worst word and worst word WPM.
@@ -55,9 +56,11 @@ Known Bugs
 
 Planned Features and Future Enhancements
 ----------------------------------------
-* Show worst 5 words and their average WPM
+* Word dictation via speech synthesis
 * QWERTY/steno on-screen keyboard
 * Highlight next chord on keyboard and color highlighting as well.
+* Run StenoTutor commands from input buffer
+* Show worst 5 words and their average WPM
 * Alphabet training mode
 * Sentence training mode
 * Options to show/hide the various info and features
@@ -65,13 +68,12 @@ Planned Features and Future Enhancements
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
 * Font colors and GUI colors configuration file
 * GUI interface, eg: buttons
-* Word dictation via speech synthesis
 
 Changelog
 ---------
 
 *Version 0.0.3*
-* Added speech synthesis capability. Currently, new levels are announced. Sound can be turned of in session.properties, property name session.isSoundEnabled
+* Added speech synthesis capability. Currently, new levels are announced and session WPM are announced periodically. All this is fine tunable in session.properties.
 * Added pause/resume current lesson with TAB key. You can resume with any key or chord, and the stroke will be printed in the input buffer.
 * Input is now directly taken from Plover standard output.
 * Fixed bug: word backlisting was not working properly with multiple words per line.

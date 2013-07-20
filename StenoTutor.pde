@@ -1,5 +1,3 @@
-import guru.ttslib.*;
-
 /*
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +17,7 @@ import guru.ttslib.*;
 
 import java.io.*;
 import java.util.Properties;
+import guru.ttslib.*;
 
 // Session parameters, see data/session.properties for more info
 String lessonName;
@@ -30,6 +29,8 @@ int wordAvgSamples;
 int wordStartAvgWpm;
 boolean isSingleWordBuffer;
 boolean isSoundEnabled;
+boolean isAnnounceLevels;
+int wpmReportingPeriod;
 
 // Used to read Plover log
 BufferedReader logReader = null;
@@ -182,9 +183,7 @@ void setup() {
   
   // Initialize and configure speech synthesis
   tts = new TTS();
-  tts.setPitch(240);
-  tts.setPitchRange(180);
-  tts.setPitchShift(0.2);
+  tts.setPitchRange(5);
   
   // Configure display size
   size(frameSizeX, frameSizeY);
@@ -220,9 +219,14 @@ void draw() {
       lessonStartTime = System.currentTimeMillis();
       lastTypedWordTime = lessonStartTime - ((long) 60000.0 / wordStartAvgWpm);
       // Announce Level 0
-      if (isSoundEnabled) {
+      if (isSoundEnabled && isAnnounceLevels) {
         Speaker speaker = new Speaker("Level " + currentLevel); 
         speaker.start();
+      }
+      // If WPM reporting is enabled, start it
+      if (isSoundEnabled && wpmReportingPeriod > 0) {
+        WpmReporter wpmReporter = new WpmReporter((long) wpmReportingPeriod * 1000);
+        wpmReporter.start();
       }
     }
     previousStroke = stroke;
@@ -312,6 +316,8 @@ void readSessionConfig() {
   wordStartAvgWpm = Integer.valueOf(properties.getProperty("session.wordStartAvgWpm", "" + 20));
   isSingleWordBuffer = Boolean.valueOf(properties.getProperty("session.isSingleWordBuffer", "false"));
   isSoundEnabled = Boolean.valueOf(properties.getProperty("session.isSoundEnabled", "true"));
+  isAnnounceLevels = Boolean.valueOf(properties.getProperty("session.isAnnounceLevels", "true"));
+  wpmReportingPeriod = Integer.valueOf(properties.getProperty("session.wpmReportingPeriod", "" + 60));
 }
 
 // Automatically find Plover log file path
@@ -381,7 +387,7 @@ void showTextInfo(Stroke stroke) {
   textFont(font, defaultFontSize);
   text(dictionary.get(currentWordIndex).stroke, nextChordX, nextChordY);
   text(stroke.isDelete ? "*" : buffer.equals("") ? "" : stroke.stroke, lastChordX, lastChordY);
-  text(isLessonStarted ? (int) (typedWords / (getElapsedTime() / 60000.0)) : 0, wpmX, wpmY);
+  text((int) getAverageWpm(), wpmX, wpmY);
   long timerValue = isLessonStarted ? getElapsedTime() : 0;
   text((int) timerValue/1000, timerX, timerY);
   text(isLessonStarted ? (int) wordStats.get(currentWordIndex).getAvgWpm() : 0, wordWpmX, wordWpmY);
@@ -390,6 +396,11 @@ void showTextInfo(Stroke stroke) {
   text(dictionary.size(), totalWordsX, totalWordsY);
   text(worstWordWpm, worstWordWpmX, worstWordWpmY);
   text(worstWord, worstWordX, worstWordY);
+}
+
+// Get session average WPM
+float getAverageWpm() {
+  return isLessonStarted ? (typedWords / (getElapsedTime() / 60000.0)) : 0.0;
 }
 
 // If the input buffer matches the current word or if forceNextWord
@@ -460,7 +471,7 @@ void levelUp() {
   currentLevel++;
   
   // Announce current level
-  if (isSoundEnabled) {
+  if (isSoundEnabled && isAnnounceLevels) {
     Speaker speaker = new Speaker("Level " + currentLevel); 
     speaker.start();
   }
@@ -819,6 +830,7 @@ private class NextWordsBuffer {
   }
 }
 
+// This thread announces the statement just once
 private class Speaker extends Thread {
   String statement;
   
@@ -828,5 +840,31 @@ private class Speaker extends Thread {
   
   void run() {
     tts.speak(statement);
+  }
+}
+
+// This thread periodically announces average WPM
+private class WpmReporter extends Thread {
+  long period;
+  
+  WpmReporter(long period) {
+    this.period = period;
+    println(period);
+  }
+  
+  // Wait period, then if lesson is not paused announce WPM
+  void run() {
+    while (true) {
+      try {
+        Thread.sleep(period);
+      } catch (InterruptedException x) {
+        Thread.currentThread().interrupt();
+        break;
+      }
+      if (!isLessonPaused) {
+        Speaker speaker = new Speaker((int) getAverageWpm() + " words per minute.");
+        speaker.start();
+      }
+    }
   }
 }
