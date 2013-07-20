@@ -184,8 +184,7 @@ void draw() {
   // Read the next stroke from Plover log
   Stroke stroke = getNextStroke();
 
-  // If the stroke is not null, update the input buffer and check if
-  // it matches and possibly advance to the next word
+  // If the stroke is not null, store it
   if (stroke != null) {
     // If the lesson just started, add word start avg time. This ensures that
     // the first word doesn't start with extremely low penalty.
@@ -195,9 +194,10 @@ void draw() {
       lastTypedWordTime = lessonStartTime - ((long) 60000.0 / wordStartAvgWpm);
     }
     previousStroke = stroke;
-    updateBuffer(stroke);
-    checkBuffer(false);
   }
+  
+  // Check if input buffer matches and possibly advance to the next word
+  checkBuffer(false);
   
   // Paint background and show text info
   background(25);
@@ -206,7 +206,25 @@ void draw() {
 
 // Check for released keys and update corresponding state
 void keyReleased() {
+  // Blacklist command
   if (keyCode == CONTROL) ctrlKeyReleased = true;
+
+  // Input buffer update
+  if (key != CODED) {
+    switch(key) {
+    case BACKSPACE:
+      buffer = buffer.substring(0, max(0, buffer.length() - 1));
+      break;
+    case TAB:
+    case ESC:
+    case DELETE:
+    case ENTER:
+    case RETURN:
+      break;
+    default:
+      buffer += key;
+    }
+  }
 }
 
 // Apply start blacklist
@@ -383,7 +401,9 @@ void levelUp() {
   currentLevel++;
 }
 
-// Update the input buffer according to the passed stroke
+// Update the input buffer according to the passed stroke.
+// Not used in this version, see keyReleased() for the current
+// input buffer update mechanism.
 void updateBuffer(Stroke stroke) {
   if (stroke.isDelete) buffer = buffer.substring(0, max(0, buffer.length() - stroke.word.length()));
   else buffer += stroke.word;

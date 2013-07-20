@@ -20,7 +20,7 @@ Installation
 * Download [the repository zip file](https://github.com/caru/StenoTutor/archive/master.zip) in a directory of your choice.
 * Extract the folder corresponding to your system on your hard drive. For example, if you use Linux 32-bit, extract the folder named "application.linux32/"
 * Optionally tweak session.properties in "data/" subdirectory.
-* Run Plover (it must be version 2.4.x). It can be disabled, but it must be running.
+* Run Plover (it must be version 2.4.x). It must be running and enabled to properly capture its translated output.
 
 1. Linux - 
 Make "StenoTutor" script executable, either on command line (chmod +x StenoTutor) or by right-clicking it and changing file permissions. Finally, run StenoTutor either from command line (./StenoTutor) or by double-clicking it.
@@ -48,9 +48,7 @@ Features
 
 Known Bugs
 ----------
-* Using the '*' key too many times doesn't work, so in case of many consecutive errors for the same word it is impossible to clear the input buffer. This is not a big issue because you usually press the '*' immediately after one or two errors to clean the input buffer as soon as possible, but it must be fixed.
 * There is no check for the completion of the lesson dictionary, so there are no greetings yet and there may be errors too.
-* Unrecognized strokes are not printed at all, while the chord should be actually printed and manually deleted by the student.
 * Unlocked and total words count don't take blacklist words into account
 
 Planned Features and Future Enhancements
@@ -68,6 +66,9 @@ Planned Features and Future Enhancements
 
 Changelog
 ---------
+
+*Version 0.0.3*
+* Input is now directly taken from Plover standard output.
 
 *Version 0.0.2*
 * Show one target word at a time or fill the line and complete it. You can configure this in session.properties, property name session.isSingleWordBuffer
