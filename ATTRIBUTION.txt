@@ -1,1 +1,2 @@
-Lesson files have been imported at the start of the project from Fly: https://launchpad.net/flyploverfly
+- Lesson files have been imported at the start of the project from Fly: https://launchpad.net/flyploverfly
+- speech synthesis provided by external libraries ttslib (http://www.local-guru.net/blog/pages/ttslib) and FreeTTS (http://freetts.sourceforge.net/docs/index.php)

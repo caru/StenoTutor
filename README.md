@@ -45,6 +45,7 @@ Features
 * Session parameters can be customized in "data/session.properties".
 * Errors must be manually deleted by the student with '*' key. This allows StenoTutor to provide an experience more similar to real world typing.
 * Option to pre-compute and show multiple words at a time, to provide a typing experience similar to many online multiplayer typing games and more similar to real world typing. You can configure this in session.properties, property name session.isSingleWordBuffer. It defaults to false, that is multiple words per line.
+* When leveling up, the new level is announced with speech synthesis
 
 Known Bugs
 ----------
@@ -63,12 +64,15 @@ Planned Features and Future Enhancements
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
 * Font colors and GUI colors configuration file
 * GUI interface, eg: buttons
+* Word dictation via speech synthesis
 
 Changelog
 ---------
 
 *Version 0.0.3*
+* Added speech synthesis capability. Currently, new levels are announced. Sound can be turned of in session.properties, property name session.isSoundEnabled
 * Input is now directly taken from Plover standard output.
+* Fixed bug: word backlisting was not working properly with multiple words per line.
 
 *Version 0.0.2*
 * Show one target word at a time or fill the line and complete it. You can configure this in session.properties, property name session.isSingleWordBuffer

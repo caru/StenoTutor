@@ -1,3 +1,5 @@
+import guru.ttslib.*;
+
 /*
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,9 +29,13 @@ int minLevelUpTotalWpm;
 int wordAvgSamples;
 int wordStartAvgWpm;
 boolean isSingleWordBuffer;
+boolean isSoundEnabled;
 
 // Used to read Plover log
 BufferedReader logReader = null;
+
+// Speech synthetis
+TTS tts;
 
 // Font definition, size is modified later
 final PFont font = createFont("Arial",30,true);
@@ -165,6 +171,12 @@ void setup() {
   nextWordsBuffer = new NextWordsBuffer(frameSizeX - nextWordX);
   currentWordIndex = nextWordsBuffer.getCurrentWordIndex();
   
+  // Initialize and configure speech synthesis
+  tts = new TTS();
+  tts.setPitch(240);
+  tts.setPitchRange(180);
+  tts.setPitchShift(0.2);
+  
   // Configure display size
   size(frameSizeX, frameSizeY);
   
@@ -192,6 +204,11 @@ void draw() {
       isLessonStarted = true;
       lessonStartTime = System.currentTimeMillis();
       lastTypedWordTime = lessonStartTime - ((long) 60000.0 / wordStartAvgWpm);
+      // Announce Level 0
+      if (isSoundEnabled) {
+        Speaker speaker = new Speaker("Level " + currentLevel); 
+        speaker.start();
+      }
     }
     previousStroke = stroke;
   }
@@ -257,6 +274,7 @@ void readSessionConfig() {
   wordAvgSamples = Integer.valueOf(properties.getProperty("session.wordAvgSamples", "" + 10));
   wordStartAvgWpm = Integer.valueOf(properties.getProperty("session.wordStartAvgWpm", "" + 20));
   isSingleWordBuffer = Boolean.valueOf(properties.getProperty("session.isSingleWordBuffer", "false"));
+  isSoundEnabled = Boolean.valueOf(properties.getProperty("session.isSoundEnabled", "true"));
 }
 
 // Automatically find Plover log file path
@@ -283,8 +301,12 @@ void blacklistCurrentWord() {
     wordsBlacklist.add(dictionary.get(currentWordIndex).word);
     writeBlacklist();
     unlockedWords++;
+    
     // Make sure that the unlocked world isn't yet another blacklisted word
     while (wordsBlacklist.contains(dictionary.get(startBaseWords + unlockedWords - 1).word)) unlockedWords++;
+    
+    // Clear and refresh next words buffer
+    nextWordsBuffer.listEnd();
     checkBuffer(true);
   }
 }
@@ -399,6 +421,12 @@ void levelUp() {
     i++;
   }
   currentLevel++;
+  
+  // Announce current level
+  if (isSoundEnabled) {
+    Speaker speaker = new Speaker("Level " + currentLevel); 
+    speaker.start();
+  }
 }
 
 // Update the input buffer according to the passed stroke.
@@ -644,6 +672,11 @@ private class NextWordsBuffer {
     fillNewLine(1);
   }
   
+  // Go to last item in the list
+  void listEnd() {
+    highlightedWordIndex = nextWords.size() - 1;
+  }
+  
   // Get current word dictionary index
   int getCurrentWordIndex() {
     return nextWords.get(highlightedWordIndex);
@@ -745,5 +778,17 @@ private class NextWordsBuffer {
       if (i == highlightedWordIndex) fill(250);
       currentX += textWidth(word + " ");
     }
+  }
+}
+
+private class Speaker extends Thread {
+  String statement;
+  
+  Speaker(String statement) {
+    this.statement = statement;
+  }
+  
+  void run() {
+    tts.speak(statement);
   }
 }
