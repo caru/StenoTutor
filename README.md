@@ -44,7 +44,7 @@ Features
 * Custom lessons can be created in "data/lesson/" directory.
 * Session parameters can be customized in "data/session.properties".
 * Errors must be manually deleted by the student with '*' key. This allows StenoTutor to provide an experience more similar to real world typing.
-* Show one target word at a time or fill the line and complete it. You can configure this in session.properties, property name session.isSingleWordBuffer
+* Option to pre-compute and show multiple words at a time, to provide a typing experience similar to many online multiplayer typing games and more similar to real world typing. You can configure this in session.properties, property name session.isSingleWordBuffer. It defaults to false, that is multiple words per line.
 
 Known Bugs
 ----------
