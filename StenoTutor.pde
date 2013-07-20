@@ -183,7 +183,7 @@ void setup() {
   
   // Initialize and configure speech synthesis
   tts = new TTS();
-  tts.setPitchRange(5);
+  tts.setPitchRange(7);
   
   // Configure display size
   size(frameSizeX, frameSizeY);
@@ -219,10 +219,7 @@ void draw() {
       lessonStartTime = System.currentTimeMillis();
       lastTypedWordTime = lessonStartTime - ((long) 60000.0 / wordStartAvgWpm);
       // Announce Level 0
-      if (isSoundEnabled && isAnnounceLevels) {
-        Speaker speaker = new Speaker("Level " + currentLevel); 
-        speaker.start();
-      }
+      announceCurrentLevel();
       // If WPM reporting is enabled, start it
       if (isSoundEnabled && wpmReportingPeriod > 0) {
         WpmReporter wpmReporter = new WpmReporter((long) wpmReportingPeriod * 1000);
@@ -392,8 +389,8 @@ void showTextInfo(Stroke stroke) {
   text((int) timerValue/1000, timerX, timerY);
   text(isLessonStarted ? (int) wordStats.get(currentWordIndex).getAvgWpm() : 0, wordWpmX, wordWpmY);
   text(currentLevel, levelX, levelY);
-  text(startBaseWords + unlockedWords, unlockedWordsX, unlockedWordsY);
-  text(dictionary.size(), totalWordsX, totalWordsY);
+  text(getActualUnlockedWords(), unlockedWordsX, unlockedWordsY);
+  text(dictionary.size() - wordsBlacklist.size(), totalWordsX, totalWordsY);
   text(worstWordWpm, worstWordWpmX, worstWordWpmY);
   text(worstWord, worstWordX, worstWordY);
 }
@@ -471,10 +468,26 @@ void levelUp() {
   currentLevel++;
   
   // Announce current level
+  announceCurrentLevel();
+}
+
+// Announce current level and how many words have been unlocked
+void announceCurrentLevel() {
   if (isSoundEnabled && isAnnounceLevels) {
-    Speaker speaker = new Speaker("Level " + currentLevel); 
+    Speaker speaker = new Speaker("Level " + currentLevel + ", " + getActualUnlockedWords() + " words unlocked."); 
     speaker.start();
   }
+}
+
+// Get total unlocked words less blacklisted ones
+int getActualUnlockedWords() {
+  int result = 0;
+  for (int i = 0; i < startBaseWords + unlockedWords; i++) {
+    if (!wordsBlacklist.contains(dictionary.get(i).word)) {
+      result++;
+    }
+  }
+  return result;
 }
 
 // Update the input buffer according to the passed stroke.
