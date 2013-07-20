@@ -85,11 +85,17 @@ int currentWordIndex = 0;
 // Whether the lesson is started
 boolean isLessonStarted = false;
 
+// Whether the lesson is paused
+boolean isLessonPaused = false;
+
 // Store lesson start time for WPM calculation
 long lessonStartTime;
 
 // Store last typed word time for smart training purposes
 long lastTypedWordTime;
+
+// Store lesson pause start time for proper resuming
+long lastPauseTime;
 
 // Total words typed in the current lesson
 int typedWords = 0;
@@ -103,6 +109,9 @@ Stroke previousStroke = new Stroke();
 
 // Whether CONTROL key has been pressed and released, used to blacklist the current word
 boolean ctrlKeyReleased = false;
+
+// Whether TAB key has been pressed and released, used pause/resume the session
+boolean tabKeyReleased = false;
 
 /*
  * ---------------------
@@ -192,6 +201,12 @@ void draw() {
   if (ctrlKeyReleased) {
     blacklistCurrentWord();
   }
+  
+  // If TAB key has been released, pause/resume the session
+  if (tabKeyReleased) {
+    togglePause();
+    tabKeyReleased = false;
+  }
 
   // Read the next stroke from Plover log
   Stroke stroke = getNextStroke();
@@ -226,13 +241,20 @@ void keyReleased() {
   // Blacklist command
   if (keyCode == CONTROL) ctrlKeyReleased = true;
 
-  // Input buffer update
+  // Input buffer update.
   if (key != CODED) {
+    // If the lesson is paused, any key will resume the lesson.
+    if (isLessonPaused) {
+      tabKeyReleased = true;
+    }
+    
     switch(key) {
     case BACKSPACE:
-      buffer = buffer.substring(0, max(0, buffer.length() - 1));
+      if (isLessonStarted) buffer = buffer.substring(0, max(0, buffer.length() - 1));
       break;
     case TAB:
+      tabKeyReleased = true;
+      break;
     case ESC:
     case DELETE:
     case ENTER:
@@ -241,6 +263,21 @@ void keyReleased() {
     default:
       buffer += key;
     }
+  }
+}
+
+// Pause/resume the session
+void togglePause() {
+  if (!isLessonStarted) return;
+  if (isLessonPaused) {
+    long now = System.currentTimeMillis();
+    long pauseTime = now - lastPauseTime;
+    lessonStartTime += pauseTime;
+    lastTypedWordTime += pauseTime;
+    isLessonPaused = false;
+  } else {
+    lastPauseTime = System.currentTimeMillis();
+    isLessonPaused = true;
   }
 }
 
@@ -313,13 +350,13 @@ void blacklistCurrentWord() {
 
 // Returns time elapsed from lesson start time in milliseconds
 long getElapsedTime() {
-  return (System.currentTimeMillis() - lessonStartTime);
+  return isLessonPaused ? (lastPauseTime - lessonStartTime) : (System.currentTimeMillis() - lessonStartTime);
 }
 
 // Display all text info shown in StenoTutor window
 void showTextInfo(Stroke stroke) {
   textAlign(RIGHT);
-  fill(250);
+  fill(isLessonPaused ? 200 : 250);
   textFont(font,mainTextFontSize);
   text("Target words:", nextWordX - labelValueSpace, nextWordY);
   text("Input:", bufferX - labelValueSpace, bufferY);
@@ -336,7 +373,7 @@ void showTextInfo(Stroke stroke) {
   text("Worst w WPM:", worstWordWpmX - labelValueSpace, worstWordWpmY);
   text("Worst w:", worstWordX - labelValueSpace, worstWordY);
   textAlign(LEFT);
-  fill(250);
+  fill(isLessonPaused ? 200 : 250);
   textFont(font,mainTextFontSize);
   nextWordsBuffer.showText(nextWordX, nextWordY);
   text(buffer.trim() + (System.currentTimeMillis() % 1000 < 500 ? "_" : ""), bufferX, bufferY);
@@ -761,6 +798,7 @@ private class NextWordsBuffer {
     return new long[] {currentMinPenalty, currentMaxPenalty};
   }
   
+  // Draw target line text
   void showText(int x, int y) {
     float currentX = x;
     textFont(font, mainTextFontSize);
@@ -775,7 +813,7 @@ private class NextWordsBuffer {
         fill(250, 200, 100);
       }
       text(word, currentX, y);
-      if (i == highlightedWordIndex) fill(250);
+      if (i == highlightedWordIndex) fill(isLessonPaused ? 200 : 250);
       currentX += textWidth(word + " ");
     }
   }

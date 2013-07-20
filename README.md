@@ -38,6 +38,7 @@ Features
 --------
 * Smart word selection, slower-typed words show up more often.
 * Blacklist specific words (press CONTROL to blacklist the current word), which is saved on disk at each new addition.
+* Pause/resume current lesson with TAB key. You can resume with any key or chord, and the stroke will be printed in the input buffer.
 * Display: next chord, next word, input buffer, input chord, current word last-x-average wpm, session wpm, level, timer, total unlocked words, worst word and worst word WPM.
 * Incremental word presentation: you can configure how many words to show at the beginning of the lession, how many to add at each level up, minimum average WPM to level up, minimum single word average WPM to level up, how many of the latest samples to use for word average WPM calculation and word start average WPM.
 * There is no leveling down, StenoTutor will always make sure that you mainly work on the words that currently put you into trouble, which are usually the new ones.
@@ -71,6 +72,7 @@ Changelog
 
 *Version 0.0.3*
 * Added speech synthesis capability. Currently, new levels are announced. Sound can be turned of in session.properties, property name session.isSoundEnabled
+* Added pause/resume current lesson with TAB key. You can resume with any key or chord, and the stroke will be printed in the input buffer.
 * Input is now directly taken from Plover standard output.
 * Fixed bug: word backlisting was not working properly with multiple words per line.
 
