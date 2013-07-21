@@ -3,7 +3,7 @@ Copyright 2013 Emanuele Caruso. See LICENSE.txt for details.
 StenoTutor - Learn to stenotype
 ===============================
 
-With StenoTutor you can learn to stenotype on your QWERTY keyboard, also thanks to [Plover](https://github.com/plover/plover), an open source application which transforms your QWERTY keyboard in a stenograph, while still providing full control of your operating system.
+With StenoTutor you can learn to stenotype on your QWERTY keyboard, also thanks to [Plover](https://github.com/plover/plover), an open source application which transforms your QWERTY keyboard in a stenograph, while still mantaining full control over your operating system.
 
 StenoTutor is a free software available for GNU/Linux, Windows and Mac (not tested on Mac, please let me know if it works), and requires a recent Java runtime installed and Plover 2.4.x installed and running. It is coded in Processing IDE 2.x.
 
