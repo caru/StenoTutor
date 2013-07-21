@@ -471,10 +471,10 @@ void levelUp() {
   announceCurrentLevel();
 }
 
-// Announce current level and how many words have been unlocked
+// Announce current level
 void announceCurrentLevel() {
   if (isSoundEnabled && isAnnounceLevels) {
-    Speaker speaker = new Speaker("Level " + currentLevel + ", " + getActualUnlockedWords() + " words unlocked."); 
+    Speaker speaker = new Speaker("Level " + currentLevel); 
     speaker.start();
   }
 }
