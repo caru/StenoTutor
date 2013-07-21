@@ -17,6 +17,7 @@
 
 import java.io.*;
 import java.util.Properties;
+import guru.ttslib.*;
 
 // Session parameters, see data/session.properties for more info
 String lessonName;
@@ -27,9 +28,15 @@ int minLevelUpTotalWpm;
 int wordAvgSamples;
 int wordStartAvgWpm;
 boolean isSingleWordBuffer;
+boolean isSoundEnabled;
+boolean isAnnounceLevels;
+int wpmReportingPeriod;
 
 // Used to read Plover log
 BufferedReader logReader = null;
+
+// Speech synthetis
+TTS tts;
 
 // Font definition, size is modified later
 final PFont font = createFont("Arial",30,true);
@@ -79,11 +86,17 @@ int currentWordIndex = 0;
 // Whether the lesson is started
 boolean isLessonStarted = false;
 
+// Whether the lesson is paused
+boolean isLessonPaused = false;
+
 // Store lesson start time for WPM calculation
 long lessonStartTime;
 
 // Store last typed word time for smart training purposes
 long lastTypedWordTime;
+
+// Store lesson pause start time for proper resuming
+long lastPauseTime;
 
 // Total words typed in the current lesson
 int typedWords = 0;
@@ -97,6 +110,9 @@ Stroke previousStroke = new Stroke();
 
 // Whether CONTROL key has been pressed and released, used to blacklist the current word
 boolean ctrlKeyReleased = false;
+
+// Whether TAB key has been pressed and released, used pause/resume the session
+boolean tabKeyReleased = false;
 
 /*
  * ---------------------
@@ -165,6 +181,10 @@ void setup() {
   nextWordsBuffer = new NextWordsBuffer(frameSizeX - nextWordX);
   currentWordIndex = nextWordsBuffer.getCurrentWordIndex();
   
+  // Initialize and configure speech synthesis
+  tts = new TTS();
+  tts.setPitchRange(7);
+  
   // Configure display size
   size(frameSizeX, frameSizeY);
   
@@ -180,6 +200,12 @@ void draw() {
   if (ctrlKeyReleased) {
     blacklistCurrentWord();
   }
+  
+  // If TAB key has been released, pause/resume the session
+  if (tabKeyReleased) {
+    togglePause();
+    tabKeyReleased = false;
+  }
 
   // Read the next stroke from Plover log
   Stroke stroke = getNextStroke();
@@ -192,6 +218,13 @@ void draw() {
       isLessonStarted = true;
       lessonStartTime = System.currentTimeMillis();
       lastTypedWordTime = lessonStartTime - ((long) 60000.0 / wordStartAvgWpm);
+      // Announce Level 0
+      announceCurrentLevel();
+      // If WPM reporting is enabled, start it
+      if (isSoundEnabled && wpmReportingPeriod > 0) {
+        WpmReporter wpmReporter = new WpmReporter((long) wpmReportingPeriod * 1000);
+        wpmReporter.start();
+      }
     }
     previousStroke = stroke;
   }
@@ -209,13 +242,20 @@ void keyReleased() {
   // Blacklist command
   if (keyCode == CONTROL) ctrlKeyReleased = true;
 
-  // Input buffer update
+  // Input buffer update.
   if (key != CODED) {
+    // If the lesson is paused, any key will resume the lesson.
+    if (isLessonPaused) {
+      tabKeyReleased = true;
+    }
+    
     switch(key) {
     case BACKSPACE:
-      buffer = buffer.substring(0, max(0, buffer.length() - 1));
+      if (isLessonStarted) buffer = buffer.substring(0, max(0, buffer.length() - 1));
       break;
     case TAB:
+      tabKeyReleased = true;
+      break;
     case ESC:
     case DELETE:
     case ENTER:
@@ -224,6 +264,21 @@ void keyReleased() {
     default:
       buffer += key;
     }
+  }
+}
+
+// Pause/resume the session
+void togglePause() {
+  if (!isLessonStarted) return;
+  if (isLessonPaused) {
+    long now = System.currentTimeMillis();
+    long pauseTime = now - lastPauseTime;
+    lessonStartTime += pauseTime;
+    lastTypedWordTime += pauseTime;
+    isLessonPaused = false;
+  } else {
+    lastPauseTime = System.currentTimeMillis();
+    isLessonPaused = true;
   }
 }
 
@@ -257,6 +312,9 @@ void readSessionConfig() {
   wordAvgSamples = Integer.valueOf(properties.getProperty("session.wordAvgSamples", "" + 10));
   wordStartAvgWpm = Integer.valueOf(properties.getProperty("session.wordStartAvgWpm", "" + 20));
   isSingleWordBuffer = Boolean.valueOf(properties.getProperty("session.isSingleWordBuffer", "false"));
+  isSoundEnabled = Boolean.valueOf(properties.getProperty("session.isSoundEnabled", "true"));
+  isAnnounceLevels = Boolean.valueOf(properties.getProperty("session.isAnnounceLevels", "true"));
+  wpmReportingPeriod = Integer.valueOf(properties.getProperty("session.wpmReportingPeriod", "" + 60));
 }
 
 // Automatically find Plover log file path
@@ -283,21 +341,25 @@ void blacklistCurrentWord() {
     wordsBlacklist.add(dictionary.get(currentWordIndex).word);
     writeBlacklist();
     unlockedWords++;
+    
     // Make sure that the unlocked world isn't yet another blacklisted word
     while (wordsBlacklist.contains(dictionary.get(startBaseWords + unlockedWords - 1).word)) unlockedWords++;
+    
+    // Clear and refresh next words buffer
+    nextWordsBuffer.listEnd();
     checkBuffer(true);
   }
 }
 
 // Returns time elapsed from lesson start time in milliseconds
 long getElapsedTime() {
-  return (System.currentTimeMillis() - lessonStartTime);
+  return isLessonPaused ? (lastPauseTime - lessonStartTime) : (System.currentTimeMillis() - lessonStartTime);
 }
 
 // Display all text info shown in StenoTutor window
 void showTextInfo(Stroke stroke) {
   textAlign(RIGHT);
-  fill(250);
+  fill(isLessonPaused ? 200 : 250);
   textFont(font,mainTextFontSize);
   text("Target words:", nextWordX - labelValueSpace, nextWordY);
   text("Input:", bufferX - labelValueSpace, bufferY);
@@ -314,7 +376,7 @@ void showTextInfo(Stroke stroke) {
   text("Worst w WPM:", worstWordWpmX - labelValueSpace, worstWordWpmY);
   text("Worst w:", worstWordX - labelValueSpace, worstWordY);
   textAlign(LEFT);
-  fill(250);
+  fill(isLessonPaused ? 200 : 250);
   textFont(font,mainTextFontSize);
   nextWordsBuffer.showText(nextWordX, nextWordY);
   text(buffer.trim() + (System.currentTimeMillis() % 1000 < 500 ? "_" : ""), bufferX, bufferY);
@@ -322,15 +384,20 @@ void showTextInfo(Stroke stroke) {
   textFont(font, defaultFontSize);
   text(dictionary.get(currentWordIndex).stroke, nextChordX, nextChordY);
   text(stroke.isDelete ? "*" : buffer.equals("") ? "" : stroke.stroke, lastChordX, lastChordY);
-  text(isLessonStarted ? (int) (typedWords / (getElapsedTime() / 60000.0)) : 0, wpmX, wpmY);
+  text((int) getAverageWpm(), wpmX, wpmY);
   long timerValue = isLessonStarted ? getElapsedTime() : 0;
   text((int) timerValue/1000, timerX, timerY);
   text(isLessonStarted ? (int) wordStats.get(currentWordIndex).getAvgWpm() : 0, wordWpmX, wordWpmY);
   text(currentLevel, levelX, levelY);
-  text(startBaseWords + unlockedWords, unlockedWordsX, unlockedWordsY);
-  text(dictionary.size(), totalWordsX, totalWordsY);
+  text(getActualUnlockedWords(), unlockedWordsX, unlockedWordsY);
+  text(dictionary.size() - wordsBlacklist.size(), totalWordsX, totalWordsY);
   text(worstWordWpm, worstWordWpmX, worstWordWpmY);
   text(worstWord, worstWordX, worstWordY);
+}
+
+// Get session average WPM
+float getAverageWpm() {
+  return isLessonStarted ? (typedWords / (getElapsedTime() / 60000.0)) : 0.0;
 }
 
 // If the input buffer matches the current word or if forceNextWord
@@ -399,6 +466,28 @@ void levelUp() {
     i++;
   }
   currentLevel++;
+  
+  // Announce current level
+  announceCurrentLevel();
+}
+
+// Announce current level and how many words have been unlocked
+void announceCurrentLevel() {
+  if (isSoundEnabled && isAnnounceLevels) {
+    Speaker speaker = new Speaker("Level " + currentLevel + ", " + getActualUnlockedWords() + " words unlocked."); 
+    speaker.start();
+  }
+}
+
+// Get total unlocked words less blacklisted ones
+int getActualUnlockedWords() {
+  int result = 0;
+  for (int i = 0; i < startBaseWords + unlockedWords; i++) {
+    if (!wordsBlacklist.contains(dictionary.get(i).word)) {
+      result++;
+    }
+  }
+  return result;
 }
 
 // Update the input buffer according to the passed stroke.
@@ -644,6 +733,11 @@ private class NextWordsBuffer {
     fillNewLine(1);
   }
   
+  // Go to last item in the list
+  void listEnd() {
+    highlightedWordIndex = nextWords.size() - 1;
+  }
+  
   // Get current word dictionary index
   int getCurrentWordIndex() {
     return nextWords.get(highlightedWordIndex);
@@ -728,6 +822,7 @@ private class NextWordsBuffer {
     return new long[] {currentMinPenalty, currentMaxPenalty};
   }
   
+  // Draw target line text
   void showText(int x, int y) {
     float currentX = x;
     textFont(font, mainTextFontSize);
@@ -742,8 +837,47 @@ private class NextWordsBuffer {
         fill(250, 200, 100);
       }
       text(word, currentX, y);
-      if (i == highlightedWordIndex) fill(250);
+      if (i == highlightedWordIndex) fill(isLessonPaused ? 200 : 250);
       currentX += textWidth(word + " ");
+    }
+  }
+}
+
+// This thread announces the statement just once
+private class Speaker extends Thread {
+  String statement;
+  
+  Speaker(String statement) {
+    this.statement = statement;
+  }
+  
+  void run() {
+    tts.speak(statement);
+  }
+}
+
+// This thread periodically announces average WPM
+private class WpmReporter extends Thread {
+  long period;
+  
+  WpmReporter(long period) {
+    this.period = period;
+    println(period);
+  }
+  
+  // Wait period, then if lesson is not paused announce WPM
+  void run() {
+    while (true) {
+      try {
+        Thread.sleep(period);
+      } catch (InterruptedException x) {
+        Thread.currentThread().interrupt();
+        break;
+      }
+      if (!isLessonPaused) {
+        Speaker speaker = new Speaker((int) getAverageWpm() + " words per minute.");
+        speaker.start();
+      }
     }
   }
 }

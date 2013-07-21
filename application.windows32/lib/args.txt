@@ -1,3 +1,3 @@
 
 StenoTutor
-StenoTutor.jar,core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-windows-i586.jar,gluegen-rt-natives-windows-i586.jar
+StenoTutor.jar,core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-windows-i586.jar,gluegen-rt-natives-windows-i586.jar,cmudict04.jar,cmulex.jar,cmutimelex.jar,cmu_time_awb.jar,cmu_us_kal.jar,en_us.jar,freetts.jar,mbrola.jar,ttslib.jar

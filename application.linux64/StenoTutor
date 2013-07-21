@@ -1,4 +1,4 @@
 #!/bin/sh
 
 APPDIR=$(dirname "$0")
-java  -Djava.library.path="$APPDIR:$APPDIR/lib" -cp "$APPDIR/lib/StenoTutor.jar:$APPDIR/lib/core.jar:$APPDIR/lib/jogl-all.jar:$APPDIR/lib/gluegen-rt.jar:$APPDIR/lib/jogl-all-natives-linux-amd64.jar:$APPDIR/lib/gluegen-rt-natives-linux-amd64.jar" StenoTutor "$@"
+java  -Djava.library.path="$APPDIR:$APPDIR/lib" -cp "$APPDIR/lib/StenoTutor.jar:$APPDIR/lib/core.jar:$APPDIR/lib/jogl-all.jar:$APPDIR/lib/gluegen-rt.jar:$APPDIR/lib/jogl-all-natives-linux-amd64.jar:$APPDIR/lib/gluegen-rt-natives-linux-amd64.jar:$APPDIR/lib/cmudict04.jar:$APPDIR/lib/cmulex.jar:$APPDIR/lib/cmutimelex.jar:$APPDIR/lib/cmu_time_awb.jar:$APPDIR/lib/cmu_us_kal.jar:$APPDIR/lib/en_us.jar:$APPDIR/lib/freetts.jar:$APPDIR/lib/mbrola.jar:$APPDIR/lib/ttslib.jar" StenoTutor "$@"
