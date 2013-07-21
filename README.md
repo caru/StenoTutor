@@ -72,7 +72,7 @@ Changelog
 ---------
 
 *Version 0.0.3*
-* Added speech synthesis capability. Currently, new levels are announced together with total unlocked words and session WPM are announced periodically. All this is fine tunable in session.properties.
+* Added speech synthesis capability. Currently, new levels and session WPM are announced periodically. All this is fine tunable in session.properties.
 * Added pause/resume current lesson with TAB key. You can resume with any key or chord, and the stroke will be printed in the input buffer.
 * Input is now directly taken from Plover standard output.
 * Fixed bug: word backlisting was not working properly with multiple words per line.
