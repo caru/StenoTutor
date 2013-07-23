@@ -82,6 +82,9 @@ There is also a way to convert the sketch to a standard Java project which uses 
 Changelog
 ---------
 
+*Version 0.0.5*
+* Word blacklisting is now disabled if the lesson is paused, because that caused issues on word stats
+
 *Version 0.0.4*
 * Fixed bug: did not correctly import some lesson files
 * Added lesson on long vowels provided by Daniel Langlois
