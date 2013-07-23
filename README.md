@@ -59,6 +59,8 @@ Planned Features and Future Enhancements
 * QWERTY/steno on-screen keyboard
 * Highlight next chord on keyboard and color highlighting as well.
 * Run StenoTutor commands from input buffer
+* GUI interface, eg: buttons
+* Change lesson format to something more convenient, eg: Plover dictionary format
 * Show worst 5 words and their average WPM
 * Alphabet training mode
 * Sentence training mode
@@ -66,7 +68,16 @@ Planned Features and Future Enhancements
 * Save session statistics in txt files
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
 * Font colors and GUI colors configuration file
-* GUI interface, eg: buttons
+
+How to build StenoTutor
+-----------------------
+
+If you want to modify and rebuild StenoTutor, you just have to download and install the Processing IDE and extract the whole StenoTutor repository to your Documents/Processing folder (or you can get it with git)
+Then you will be able to open it in from Processing: File -> Sketchbook -> StenoTutor. Or you can find it with File -> Open.
+Ctrl-R -> play sketch (compiles and opens StenoTutor)
+Ctrl-E -> export application (updates application.xxx folders for the various OSs)
+
+There is also a way to convert the sketch to a standard Java project which uses Processing libraries... this will probably happen very soon for StenoTutor, because the Processing IDE is not the best compared to what Java developers are used to, and this tends to get worst as the project gets bigger.
 
 Changelog
 ---------
