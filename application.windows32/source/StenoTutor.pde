@@ -338,10 +338,10 @@ void blacklistCurrentWord() {
   // Reset CONTROL key state
   ctrlKeyReleased = false;
   
-  // If the lesson has already started, add current word to blacklist,
-  // save blacklist to file and unlock a new word. Finally, move to
-  // next word.
-  if (isLessonStarted) {
+  // If the lesson has already started and is not paused, add current
+  // word to blacklist, save blacklist to file and unlock a new word.
+  // Finally, move to next word.
+  if (isLessonStarted && !isLessonPaused) {
     wordsBlacklist.add(dictionary.get(currentWordIndex).word);
     writeBlacklist();
     unlockedWords++;
