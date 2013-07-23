@@ -17,6 +17,7 @@
 
 import java.io.*;
 import java.util.Properties;
+import java.util.Arrays;
 import guru.ttslib.*;
 
 // Session parameters, see data/session.properties for more info
@@ -113,6 +114,9 @@ boolean ctrlKeyReleased = false;
 
 // Whether TAB key has been pressed and released, used pause/resume the session
 boolean tabKeyReleased = false;
+
+// If debugging, prints more info
+boolean debug = false;
 
 /*
  * ---------------------
@@ -522,8 +526,8 @@ void readDictionary() {
   String tempLine = null;
   BufferedReader lesReader = null;
   BufferedReader chdReader = null;
-  String[] words = null;
-  String[] strokes = null;
+  ArrayList<String> words = new ArrayList<String>();
+  ArrayList<String> strokes = new ArrayList<String>();
   dictionary = new ArrayList<Word>();
   
   // Read and store words
@@ -532,7 +536,10 @@ void readDictionary() {
     lesReader = new BufferedReader(reader);
     while ((tempLine = lesReader.readLine()) != null) {
       if (tempLine.length() != 0 && tempLine.charAt(0) == '<' || tempLine.trim().length() == 0) continue;
-      words = tempLine.split(" ");
+      String[] newWords = tempLine.split(" ");
+      for (String word : newWords) {
+        words.add(word);
+      }
     }
   }
   catch (Exception e) {
@@ -552,7 +559,10 @@ void readDictionary() {
     chdReader = new BufferedReader(reader);
     while ((tempLine = chdReader.readLine()) != null) {
       if (tempLine.length() != 0 && tempLine.charAt(0) == '<' || tempLine.trim().length() == 0) continue;
-      strokes = tempLine.split(" ");
+      String[] newStrokes = tempLine.split(" ");
+      for (String stroke : newStrokes) {
+        strokes.add(stroke);
+      }
     }
   }
   catch (Exception e) {
@@ -567,11 +577,16 @@ void readDictionary() {
   }
   
   // Store words and strokes in dictionary list
-  if (words != null && strokes != null) for (int i = 0; i < words.length; i++) {
+  if (words != null && strokes != null) for (int i = 0; i < words.size(); i++) {
     Word word = new Word();
-    word.word = words[i];
-    word.stroke = strokes[i];
+    word.word = words.get(i);
+    word.stroke = strokes.get(i);
     dictionary.add(word);
+  }
+  
+  // Debug info
+  if (debug) {
+    println("Current lesson contains " + words.size() + " words and " + strokes.size() + " chords.");
   }
 }
 
@@ -580,13 +595,12 @@ void readDictionary() {
 void readBlacklist() {
   String tempLine = null;
   BufferedReader blkReader = null;
-  String[] words = null;
   try {
     Reader reader = new FileReader(blkDictionaryFilePath);
     blkReader = new BufferedReader(reader);
     while ((tempLine = blkReader.readLine()) != null) {
       if (tempLine.trim().length() == 0) continue;
-      words = tempLine.split(" ");
+      String[] words = tempLine.split(" ");
       for (String word : words) {
         wordsBlacklist.add(word);
       }
@@ -862,7 +876,6 @@ private class WpmReporter extends Thread {
   
   WpmReporter(long period) {
     this.period = period;
-    println(period);
   }
   
   // Wait period, then if lesson is not paused announce WPM
