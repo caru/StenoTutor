@@ -82,6 +82,10 @@ There is also a way to convert the sketch to a standard Java project which uses 
 Changelog
 ---------
 
+*Version 0.0.4*
+* Fixed bug: did not correctly import some lesson files
+* Added lesson on long vowels provided by Daniel Langlois
+
 *Version 0.0.3*
 * Added speech synthesis capability. Currently, new levels and session WPM are announced periodically. All this is fine tunable in session.properties.
 * Added pause/resume current lesson with TAB key. You can resume with any key or chord, and the stroke will be printed in the input buffer.
