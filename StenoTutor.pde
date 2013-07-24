@@ -680,17 +680,6 @@ String getStroke(String line, int start, int end) {
   return result.substring(0, result.length() - 1);
 }
 
-// This class represents a lesson word
-private class Word {
-  String stroke = "";
-  String word = "";
-}
-
-// This class represents an actual stroke
-private class Stroke extends Word{
-  boolean isDelete = false;
-}
-
 // Represents a multi-word buffer containing the next target line
 private class NextWordsBuffer {
   // A list of integers containing all the words in the line

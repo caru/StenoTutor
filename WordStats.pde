@@ -19,7 +19,7 @@
 
 // This class stores word speed and accuracy, and provides an
 // utility method to compute its penalty score.
-private class WordStats {
+public class WordStats {
   ArrayList<Long> typeTime = new ArrayList<Long>();
   ArrayList<Boolean> isAccurate = new ArrayList<Boolean>();
   
