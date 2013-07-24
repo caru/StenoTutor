@@ -176,7 +176,7 @@ void setup() {
   
   // Initialize word stats
   for (int i = 0; i < dictionary.size(); i++) {
-    wordStats.add(new WordStats());
+    wordStats.add(new WordStats(wordStartAvgWpm, wordAvgSamples));
   }
   
   // Initialize target line buffer and set next word index

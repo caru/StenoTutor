@@ -22,10 +22,12 @@
 public class WordStats {
   ArrayList<Long> typeTime = new ArrayList<Long>();
   ArrayList<Boolean> isAccurate = new ArrayList<Boolean>();
+  int averageSamples;
   
   // Standard constructor. Add a low performance record by default.
-  public WordStats() {
-    typeTime.add((long) 60000.0 / wordStartAvgWpm);
+  public WordStats(int startAverageWpm, int averageSamples) {
+    this.averageSamples = averageSamples;
+    typeTime.add((long) 60000.0 / startAverageWpm);
     isAccurate.add(false); // this field is not used in the current version
   }
   
@@ -33,8 +35,8 @@ public class WordStats {
   float getAvgWpm() {
     long totalTime = 0;
     if (typeTime.size() > 0) {
-      for (int i = typeTime.size() - wordAvgSamples; i < typeTime.size(); i++) totalTime += typeTime.get(max(i, 0));
-      return wordAvgSamples * 1.0 / (totalTime / 60000.0);
+      for (int i = typeTime.size() - averageSamples; i < typeTime.size(); i++) totalTime += typeTime.get(max(i, 0));
+      return averageSamples * 1.0 / (totalTime / 60000.0);
     } else {
       return 1.0;
     }
@@ -45,7 +47,7 @@ public class WordStats {
   long getWordPenalty() {
     long timePenalty = 0;
     if (typeTime.size() > 0) {
-      for (int i = typeTime.size() - wordAvgSamples; i < typeTime.size(); i++) timePenalty += typeTime.get(max(i, 0));
+      for (int i = typeTime.size() - averageSamples; i < typeTime.size(); i++) timePenalty += typeTime.get(max(i, 0));
       // The returned value is directly proportional to timePenalty^3
       return timePenalty * timePenalty / 2000 * timePenalty;
     } else {
