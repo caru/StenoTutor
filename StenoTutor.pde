@@ -1,10 +1,12 @@
 /*
- *   This program is free software: you can redistribute it and/or modify
+ *   This file is part of StenoTutor.
+ *
+ *   StenoTutor is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
+ *   StenoTutor is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
@@ -18,7 +20,6 @@
 import java.io.*;
 import java.util.Properties;
 import java.util.Arrays;
-import guru.ttslib.*;
 
 // Session parameters, see data/session.properties for more info
 String lessonName;
@@ -35,9 +36,6 @@ int wpmReportingPeriod;
 
 // Used to read Plover log
 BufferedReader logReader = null;
-
-// Speech synthetis
-TTS tts;
 
 // Font definition, size is modified later
 final PFont font = createFont("Arial",30,true);
@@ -184,10 +182,6 @@ void setup() {
   // Initialize target line buffer and set next word index
   nextWordsBuffer = new NextWordsBuffer(frameSizeX - nextWordX);
   currentWordIndex = nextWordsBuffer.getCurrentWordIndex();
-  
-  // Initialize and configure speech synthesis
-  tts = new TTS();
-  tts.setPitchRange(7);
   
   // Configure display size
   size(frameSizeX, frameSizeY);
@@ -854,19 +848,6 @@ private class NextWordsBuffer {
       if (i == highlightedWordIndex) fill(isLessonPaused ? 200 : 250);
       currentX += textWidth(word + " ");
     }
-  }
-}
-
-// This thread announces the statement just once
-private class Speaker extends Thread {
-  String statement;
-  
-  Speaker(String statement) {
-    this.statement = statement;
-  }
-  
-  void run() {
-    tts.speak(statement);
   }
 }
 
