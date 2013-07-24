@@ -691,43 +691,6 @@ private class Stroke extends Word{
   boolean isDelete = false;
 }
 
-// This class stores word speed and accuracy, and provides an
-// utility method to compute its penalty score.
-private class WordStats {
-  ArrayList<Long> typeTime = new ArrayList<Long>();
-  ArrayList<Boolean> isAccurate = new ArrayList<Boolean>();
-  
-  // Standard constructor. Add a low performance record by default.
-  public WordStats() {
-    typeTime.add((long) 60000.0 / wordStartAvgWpm);
-    isAccurate.add(false); // this field is not used in the current version
-  }
-  
-  // Get average WPM for this word
-  float getAvgWpm() {
-    long totalTime = 0;
-    if (typeTime.size() > 0) {
-      for (int i = typeTime.size() - wordAvgSamples; i < typeTime.size(); i++) totalTime += typeTime.get(max(i, 0));
-      return wordAvgSamples * 1.0 / (totalTime / 60000.0);
-    } else {
-      return 1.0;
-    }
-  }
-  
-  // Return the word penalty score. In this version, only speed is
-  // taking into account
-  long getWordPenalty() {
-    long timePenalty = 0;
-    if (typeTime.size() > 0) {
-      for (int i = typeTime.size() - wordAvgSamples; i < typeTime.size(); i++) timePenalty += typeTime.get(max(i, 0));
-      // The returned value is directly proportional to timePenalty^3
-      return timePenalty * timePenalty / 2000 * timePenalty;
-    } else {
-      return 9999999999L;
-    }
-  }
-}
-
 // Represents a multi-word buffer containing the next target line
 private class NextWordsBuffer {
   // A list of integers containing all the words in the line
