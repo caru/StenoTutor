@@ -495,8 +495,6 @@ int getActualUnlockedWords() {
 void updateBuffer(Stroke stroke) {
   if (stroke.isDelete) buffer = buffer.substring(0, max(0, buffer.length() - stroke.word.length()));
   else buffer += stroke.word;
-  // TODO: append stroke to buffer input in the case:
-  // if (stroke.word.equals(" None")) return;
 }
 
 // Initialize Plover log reader and go to end of file
