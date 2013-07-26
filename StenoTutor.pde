@@ -34,6 +34,9 @@ boolean isSoundEnabled;
 boolean isAnnounceLevels;
 int wpmReportingPeriod;
 
+// Contains various helper methods
+Utils utils = new Utils();
+
 // Used to read Plover log
 BufferedReader logReader = null;
 
@@ -168,7 +171,6 @@ void setup() {
   lesDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".les";
   chdDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".chd";
   blkDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".blk";
-  Utils utils = new Utils();
   dictionary = utils.readDictionary(lesDictionaryFilePath, chdDictionaryFilePath, debug);
   wordsBlacklist = utils.readBlacklist(blkDictionaryFilePath);
   
@@ -338,7 +340,7 @@ void blacklistCurrentWord() {
   // Finally, move to next word.
   if (isLessonStarted && !isLessonPaused) {
     wordsBlacklist.add(dictionary.get(currentWordIndex).word);
-    writeBlacklist();
+    utils.writeBlacklist(wordsBlacklist, blkDictionaryFilePath);
     unlockedWords++;
     
     // Make sure that the unlocked world isn't yet another blacklisted word
@@ -510,32 +512,6 @@ void readEndOfFile() {
   }
   catch (Exception e) {
     println("Error while reading Plover log file: " + e.getMessage());
-  }
-}
-
-// Store updated blacklist data in external file
-void writeBlacklist() {
-  BufferedWriter blkWriter = null;
-  StringBuilder blacklist = new StringBuilder();
-  for (String word : wordsBlacklist) {
-    blacklist.append(word + " ");
-  }
-  String fileContent = blacklist.toString();
-  fileContent = fileContent.substring(0, fileContent.length() - 1);
-  try {
-    Writer writer = new FileWriter(blkDictionaryFilePath);
-    blkWriter = new BufferedWriter(writer);
-    blkWriter.write(fileContent);
-  }
-  catch (Exception e) {
-    
-  }
-  if (blkWriter != null) {
-    try {
-      blkWriter.close();
-    } catch (Exception e) {
-      
-    }
   }
 }
 

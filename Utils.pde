@@ -124,4 +124,30 @@ public class Utils {
 
     return wordsBlacklist;
   }
+
+  // Store blacklist data in given file
+  void writeBlacklist(ArrayList<String> wordsBlacklist, String blkDictionaryFilePath) {
+    BufferedWriter blkWriter = null;
+    StringBuilder blacklist = new StringBuilder();
+    for (String word : wordsBlacklist) {
+      blacklist.append(word + " ");
+    }
+    String fileContent = blacklist.toString();
+    fileContent = fileContent.substring(0, fileContent.length() - 1);
+    try {
+      Writer writer = new FileWriter(blkDictionaryFilePath);
+      blkWriter = new BufferedWriter(writer);
+      blkWriter.write(fileContent);
+    }
+    catch (Exception e) {
+      println("Error while writing blacklist file:" + e.getMessage());
+    }
+    if (blkWriter != null) {
+      try {
+        blkWriter.close();
+      } catch (Exception e) {
+
+      }
+    }
+  }
 }
