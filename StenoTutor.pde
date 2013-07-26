@@ -168,7 +168,8 @@ void setup() {
   lesDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".les";
   chdDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".chd";
   blkDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".blk";
-  readDictionary();
+  Utils utils = new Utils();
+  dictionary = utils.readDictionary(lesDictionaryFilePath, chdDictionaryFilePath, debug);
   readBlacklist();
   
   // Make sure startBaseWords is adjusted based on blacklist
@@ -511,76 +512,6 @@ void readEndOfFile() {
   }
   catch (Exception e) {
     println("Error while reading Plover log file: " + e.getMessage());
-  }
-}
-
-// Read lesson dictionary and store words and corresponing strokes
-// in list fields
-void readDictionary() {
-  String tempLine = null;
-  BufferedReader lesReader = null;
-  BufferedReader chdReader = null;
-  ArrayList<String> words = new ArrayList<String>();
-  ArrayList<String> strokes = new ArrayList<String>();
-  dictionary = new ArrayList<Word>();
-  
-  // Read and store words
-  try {
-    Reader reader = new FileReader(lesDictionaryFilePath);
-    lesReader = new BufferedReader(reader);
-    while ((tempLine = lesReader.readLine()) != null) {
-      if (tempLine.length() != 0 && tempLine.charAt(0) == '<' || tempLine.trim().length() == 0) continue;
-      String[] newWords = tempLine.split(" ");
-      for (String word : newWords) {
-        words.add(word);
-      }
-    }
-  }
-  catch (Exception e) {
-    println("Error while reading .les dictionary file: " + e.getMessage());
-  }
-  if (lesReader != null) {
-    try {
-      lesReader.close();
-    } catch (Exception e) {
-      
-    }
-  }
-  
-  // Read and store strokes
-  try {
-    Reader reader = new FileReader(chdDictionaryFilePath);
-    chdReader = new BufferedReader(reader);
-    while ((tempLine = chdReader.readLine()) != null) {
-      if (tempLine.length() != 0 && tempLine.charAt(0) == '<' || tempLine.trim().length() == 0) continue;
-      String[] newStrokes = tempLine.split(" ");
-      for (String stroke : newStrokes) {
-        strokes.add(stroke);
-      }
-    }
-  }
-  catch (Exception e) {
-    println("Error while reading .chd dictionary file: " + e.getMessage());
-  }
-  if (chdReader != null) {
-    try {
-      chdReader.close();
-    } catch (Exception e) {
-      
-    }
-  }
-  
-  // Store words and strokes in dictionary list
-  if (words != null && strokes != null) for (int i = 0; i < words.size(); i++) {
-    Word word = new Word();
-    word.word = words.get(i);
-    word.stroke = strokes.get(i);
-    dictionary.add(word);
-  }
-  
-  // Debug info
-  if (debug) {
-    println("Current lesson contains " + words.size() + " words and " + strokes.size() + " chords.");
   }
 }
 
