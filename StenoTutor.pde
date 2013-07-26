@@ -170,7 +170,7 @@ void setup() {
   blkDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".blk";
   Utils utils = new Utils();
   dictionary = utils.readDictionary(lesDictionaryFilePath, chdDictionaryFilePath, debug);
-  readBlacklist();
+  wordsBlacklist = utils.readBlacklist(blkDictionaryFilePath);
   
   // Make sure startBaseWords is adjusted based on blacklist
   applyStartBlacklist();
@@ -512,34 +512,6 @@ void readEndOfFile() {
   }
   catch (Exception e) {
     println("Error while reading Plover log file: " + e.getMessage());
-  }
-}
-
-// Read lesson blacklist (if any) and store blacklisted words
-// in wordsBlacklist field
-void readBlacklist() {
-  String tempLine = null;
-  BufferedReader blkReader = null;
-  try {
-    Reader reader = new FileReader(blkDictionaryFilePath);
-    blkReader = new BufferedReader(reader);
-    while ((tempLine = blkReader.readLine()) != null) {
-      if (tempLine.trim().length() == 0) continue;
-      String[] words = tempLine.split(" ");
-      for (String word : words) {
-        wordsBlacklist.add(word);
-      }
-    }
-  }
-  catch (Exception e) {
-    
-  }
-  if (blkReader != null) {
-    try {
-      blkReader.close();
-    } catch (Exception e) {
-      
-    }
   }
 }
 

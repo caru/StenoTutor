@@ -93,4 +93,35 @@ public class Utils {
 
     return dictionary;
   }
+
+  // Read lesson blacklist (if any) and add blacklisted words
+  // to the returned list
+  ArrayList<String> readBlacklist(String blkDictionaryFilePath) {
+    ArrayList<String> wordsBlacklist = new ArrayList<String>();
+    String tempLine = null;
+    BufferedReader blkReader = null;
+    try {
+      Reader reader = new FileReader(blkDictionaryFilePath);
+      blkReader = new BufferedReader(reader);
+      while ((tempLine = blkReader.readLine()) != null) {
+        if (tempLine.trim().length() == 0) continue;
+        String[] words = tempLine.split(" ");
+        for (String word : words) {
+          wordsBlacklist.add(word);
+        }
+      }
+    }
+    catch (Exception e) {
+      println("Error while reading blacklist file (this is fine if you don't have blacklisted words):" + e.getMessage());
+    }
+    if (blkReader != null) {
+      try {
+        blkReader.close();
+      } catch (Exception e) {
+
+      }
+    }
+
+    return wordsBlacklist;
+  }
 }
