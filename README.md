@@ -20,7 +20,7 @@ Installation
 * Download [the repository zip file](https://github.com/caru/StenoTutor/archive/master.zip) in a directory of your choice.
 * Extract the folder corresponding to your system on your hard drive. For example, if you use Linux 32-bit, extract the folder named "application.linux32/"
 * Optionally tweak session.properties in "data/" subdirectory.
-* Run Plover (it must be version 2.4.x). It must be running and enabled to properly capture its translated output.
+* Run Plover (it must be version 2.4+). It must be running and enabled to properly capture its translated output.
 
 1. Linux - 
 Make "StenoTutor" script executable, either on command line (chmod +x StenoTutor) or by right-clicking it and changing file permissions. Finally, run StenoTutor either from command line (./StenoTutor) or by double-clicking it.
