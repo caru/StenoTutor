@@ -165,7 +165,7 @@ void setup() {
   findPloverLog();
   
   // Go to the end of Plover log file
-  readEndOfFile();
+  logReader = utils.readEndOfFile(logFilePath);
   
   // Prepare file paths and read lesson dictionary and blacklist
   lesDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".les";
@@ -209,7 +209,7 @@ void draw() {
   }
 
   // Read the next stroke from Plover log
-  Stroke stroke = getNextStroke();
+  Stroke stroke = utils.getNextStroke(logReader);
 
   // If the stroke is not null, store it
   if (stroke != null) {
@@ -497,62 +497,4 @@ int getActualUnlockedWords() {
 void updateBuffer(Stroke stroke) {
   if (stroke.isDelete) buffer = buffer.substring(0, max(0, buffer.length() - stroke.word.length()));
   else buffer += stroke.word;
-}
-
-// Initialize Plover log reader and go to end of file
-void readEndOfFile() {
-  String line = null;
-  String tempLine = null;
-  try {
-    Reader reader = new FileReader(logFilePath);
-    logReader = new BufferedReader(reader);
-    while ((tempLine = logReader.readLine()) != null) {
-      line = tempLine;
-    }
-  }
-  catch (Exception e) {
-    println("Error while reading Plover log file: " + e.getMessage());
-  }
-}
-
-// Get next stroke from Plover log file
-Stroke getNextStroke() {
-  Stroke stroke = new Stroke();
-  String line = null;
-  try {
-    line = logReader.readLine();
-    int indexOfTransl = -1;
-    if(line != null) indexOfTransl = line.indexOf("Translation");
-    if(line != null && indexOfTransl > -1) {
-      boolean isMultipleWorld = false;
-      int indexOfLast = 1 + line.indexOf(",) : ");
-      if (indexOfLast < 1) {
-        isMultipleWorld = true;
-        indexOfLast = line.indexOf(" : ");
-      }
-      if (indexOfTransl == 24) {
-        stroke.isDelete = false;
-      }
-      else {
-        stroke.isDelete = true;
-      }
-      stroke.stroke = getStroke(line, indexOfTransl + 14, indexOfLast - 2);
-      stroke.word = line.substring(indexOfLast + (isMultipleWorld ? 2 : 3), line.length() - 1);
-      return stroke;
-    } else {
-      return null;
-    }
-  } catch (Exception e) {
-  
-  }
-  return null;
-}
-
-// Format strokes and multiple strokes for a single word
-String getStroke(String line, int start, int end) {
-  String result = "";
-  String strokeLine = line.substring(start, end);
-  String[] strokes = strokeLine.split("', '");
-  for (String stroke: strokes) result += stroke + "/";
-  return result.substring(0, result.length() - 1);
 }
