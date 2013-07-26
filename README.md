@@ -77,7 +77,7 @@ Then you will be able to open it in from Processing: File -> Sketchbook -> Steno
 Ctrl-R -> play sketch (compiles and opens StenoTutor)
 Ctrl-E -> export application (updates application.xxx folders for the various OSs)
 
-There is also a way to convert the sketch to a standard Java project which uses Processing libraries... this will probably happen very soon for StenoTutor, because the Processing IDE is not the best compared to what Java developers are used to, and this tends to get worst as the project gets bigger.
+You can also probably use your favorite editor. For example Processing plugins exist for Emacs and Sublime text editors.
 
 Changelog
 ---------
