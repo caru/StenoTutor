@@ -23,10 +23,10 @@ import guru.ttslib.*;
 public class Speaker extends Thread {
   // What to say
   String statement;
-  
+
   // Speech synthesis wrapper
   TTS tts;
-  
+
   // Set statement and initialize TTS wrapper
   Speaker(String statement) {
     this.statement = statement;
@@ -35,7 +35,7 @@ public class Speaker extends Thread {
     tts = new TTS();
     tts.setPitchRange(7);
   }
-  
+
   // Read the statement once
   void run() {
     tts.speak(statement);

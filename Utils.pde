@@ -31,7 +31,7 @@ public class Utils {
     ArrayList<String> words = new ArrayList<String>();
     ArrayList<String> strokes = new ArrayList<String>();
     ArrayList<Word> dictionary = new ArrayList<Word>();
-    
+
     // Read and store words
     try {
       Reader reader = new FileReader(lesDictionaryFilePath);
@@ -51,10 +51,10 @@ public class Utils {
       try {
         lesReader.close();
       } catch (Exception e) {
-        
+
       }
     }
-    
+
     // Read and store strokes
     try {
       Reader reader = new FileReader(chdDictionaryFilePath);
@@ -74,10 +74,10 @@ public class Utils {
       try {
         chdReader.close();
       } catch (Exception e) {
-        
+
       }
     }
-    
+
     // Store words and strokes in dictionary list
     if (words != null && strokes != null) for (int i = 0; i < words.size(); i++) {
       Word word = new Word();
@@ -85,7 +85,7 @@ public class Utils {
       word.stroke = strokes.get(i);
       dictionary.add(word);
     }
-    
+
     // Debug info
     if (debug) {
       println("Current lesson contains " + words.size() + " words and " + strokes.size() + " chords.");

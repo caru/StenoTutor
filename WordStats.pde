@@ -23,14 +23,14 @@ public class WordStats {
   ArrayList<Long> typeTime = new ArrayList<Long>();
   ArrayList<Boolean> isAccurate = new ArrayList<Boolean>();
   int averageSamples;
-  
+
   // Standard constructor. Add a low performance record by default.
   public WordStats(int startAverageWpm, int averageSamples) {
     this.averageSamples = averageSamples;
     typeTime.add((long) 60000.0 / startAverageWpm);
     isAccurate.add(false); // this field is not used in the current version
   }
-  
+
   // Get average WPM for this word
   float getAvgWpm() {
     long totalTime = 0;
@@ -41,7 +41,7 @@ public class WordStats {
       return 1.0;
     }
   }
-  
+
   // Return the word penalty score. In this version, only speed is
   // taking into account
   long getWordPenalty() {

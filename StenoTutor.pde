@@ -161,35 +161,35 @@ int worstWordY = baseY + 200;
 void setup() {
   // Read session configuration
   readSessionConfig();
-  
+
   // Find Plover log path
   findPloverLog();
-  
+
   // Go to the end of Plover log file
   logReader = utils.readEndOfFile(logFilePath);
-  
+
   // Prepare file paths and read lesson dictionary and blacklist
   lesDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".les";
   chdDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".chd";
   blkDictionaryFilePath = sketchPath + "/data/lessons/" + lessonName + ".blk";
   dictionary = utils.readDictionary(lesDictionaryFilePath, chdDictionaryFilePath, debug);
   wordsBlacklist = utils.readBlacklist(blkDictionaryFilePath);
-  
+
   // Make sure startBaseWords is adjusted based on blacklist
   applyStartBlacklist();
-  
+
   // Initialize word stats
   for (int i = 0; i < dictionary.size(); i++) {
     wordStats.add(new WordStats(wordStartAvgWpm, wordAvgSamples));
   }
-  
+
   // Initialize target line buffer and set next word index
   nextWordsBuffer = new NextWordsBuffer(frameSizeX - nextWordX);
   currentWordIndex = nextWordsBuffer.getCurrentWordIndex();
-  
+
   // Configure display size
   size(frameSizeX, frameSizeY);
-  
+
   // Paint background and show text info
   background(25);
   Stroke stroke = new Stroke();
@@ -207,7 +207,7 @@ void draw() {
   if (ctrlKeyReleased) {
     blacklistCurrentWord();
   }
-  
+
   // If TAB key has been released, pause/resume the session
   if (tabKeyReleased) {
     togglePause();
@@ -235,10 +235,10 @@ void draw() {
     }
     previousStroke = stroke;
   }
-  
+
   // Check if input buffer matches and possibly advance to the next word
   checkBuffer(false);
-  
+
   // Paint background and show text info
   background(25);
   showTextInfo(stroke == null ? previousStroke : stroke);
@@ -255,7 +255,7 @@ void keyReleased() {
     if (isLessonPaused) {
       tabKeyReleased = true;
     }
-    
+
     switch(key) {
     case BACKSPACE:
       if (isLessonStarted) buffer = buffer.substring(0, max(0, buffer.length() - 1));
@@ -341,7 +341,7 @@ void findPloverLog() {
 void blacklistCurrentWord() {
   // Reset CONTROL key state
   ctrlKeyReleased = false;
-  
+
   // If the lesson has already started and is not paused, add current
   // word to blacklist, save blacklist to file and unlock a new word.
   // Finally, move to next word.
@@ -349,10 +349,10 @@ void blacklistCurrentWord() {
     wordsBlacklist.add(dictionary.get(currentWordIndex).word);
     utils.writeBlacklist(wordsBlacklist, blkDictionaryFilePath);
     unlockedWords++;
-    
+
     // Make sure that the unlocked world isn't yet another blacklisted word
     while (wordsBlacklist.contains(dictionary.get(startBaseWords + unlockedWords - 1).word)) unlockedWords++;
-    
+
     // Clear and refresh next words buffer
     nextWordsBuffer.listEnd();
     checkBuffer(true);
@@ -479,7 +479,7 @@ void levelUp() {
     i++;
   }
   currentLevel++;
-  
+
   // Announce current level
   announceCurrentLevel();
 }
