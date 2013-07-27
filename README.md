@@ -7,9 +7,9 @@ With StenoTutor you can learn to stenotype on your QWERTY keyboard, also thanks 
 
 StenoTutor is a free software available for GNU/Linux, Windows and Mac (not tested on Mac, please let me know if it works), and requires a recent Java runtime installed and Plover 2.4.x installed and running. It is coded in Processing IDE 2.x.
 
-StenoTutor is smart: words that takes you longer to type have more possibilites of showing up, so you will spend most of your time working on your weaknesses. It also allows to blacklist some words, in case you don't have a NKRO keyboard yet and you just want to see if you enjoy steno and how well you speed up, without being annoyed by words that your keyboard cannot actually type.
+StenoTutor tries to be a smart trainer: words that takes you longer to type have more possibilites of showing up, so you will spend most of your time working on your weaknesses. It also allows to blacklist some words, in case you don't have a NKRO keyboard yet and you just want to see if you enjoy steno and how well you speed up, without being annoyed by words that your keyboard cannot actually type without rolling or arpeggiating chords.
 
-Lessons have been copied from a similar project called [Fly](https://launchpad.net/flyploverfly).
+Lessons have been initially copied from a similar project called [Fly](https://launchpad.net/flyploverfly).
 
 The StenoTutor application was initially developed and published by Emanuele Caruso.
 
@@ -58,9 +58,11 @@ Planned Features and Future Enhancements
 ----------------------------------------
 * QWERTY/steno on-screen keyboard
 * Highlight next chord on keyboard and color highlighting as well.
+* Dynamically show next line words as they are created to allow for a better typing flow at the end of lines
 * Run StenoTutor commands from input buffer
 * GUI interface, eg: buttons
 * Change lesson format to something more convenient, eg: Plover dictionary format
+* Add a command to repeat current word with text-to-speech
 * Show worst 5 words and their average WPM
 * Alphabet training mode
 * Sentence training mode
@@ -69,15 +71,16 @@ Planned Features and Future Enhancements
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
 * Font colors and GUI colors configuration file
 
-How to build StenoTutor
------------------------
+How to build StenoTutor (for developers)
+----------------------------------------
 
 If you want to modify and rebuild StenoTutor, you just have to download and install the Processing IDE and extract the whole StenoTutor repository to your Documents/Processing folder (or you can get it with git)
 Then you will be able to open it in from Processing: File -> Sketchbook -> StenoTutor. Or you can find it with File -> Open.
 Ctrl-R -> play sketch (compiles and opens StenoTutor)
 Ctrl-E -> export application (updates application.xxx folders for the various OSs)
 
-You can also probably use your favorite editor. For example Processing plugins exist for Emacs and Sublime text editors.
+You can also probably use your favorite editor. For example, Processing plugins exist for Emacs and Sublime text editors.
+In the future, it may be needed or just convenient to refactor StenoTutor to a standard Java project (while still using Processing framework and libraries)
 
 Changelog
 ---------
