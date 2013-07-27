@@ -37,6 +37,7 @@ Follow readme.txt
 Features
 --------
 * Smart word selection, slower-typed words show up more often.
+* Optional basic Word dictation via speech synthesis
 * Speech syntesis powered stats and new level announcements
 * Blacklist specific words (press CONTROL to blacklist the current word), which is saved on disk at each new addition.
 * Pause/resume current lesson with TAB key. You can resume with any key or chord, and the stroke will be printed in the input buffer.
@@ -55,7 +56,6 @@ Known Bugs
 
 Planned Features and Future Enhancements
 ----------------------------------------
-* Word dictation via speech synthesis
 * QWERTY/steno on-screen keyboard
 * Highlight next chord on keyboard and color highlighting as well.
 * Run StenoTutor commands from input buffer
@@ -81,6 +81,9 @@ You can also probably use your favorite editor. For example Processing plugins e
 
 Changelog
 ---------
+
+*Version 0.0.6*
+* Added optional text-to-speech word dictation
 
 *Version 0.0.5*
 * Word blacklisting is now disabled if the lesson is paused, because that caused issues on word stats

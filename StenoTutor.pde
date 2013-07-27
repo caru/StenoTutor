@@ -33,6 +33,7 @@ boolean isSingleWordBuffer;
 boolean isSoundEnabled;
 boolean isAnnounceLevels;
 int wpmReportingPeriod;
+boolean isWordDictationEnabled;
 
 // Contains various helper methods
 Utils utils = new Utils();
@@ -193,6 +194,11 @@ void setup() {
   background(25);
   Stroke stroke = new Stroke();
   showTextInfo(stroke);
+
+  // If word dictation is enabled, TTS the first word
+  if (isWordDictationEnabled) {
+    sayCurrentWord();
+  }
 }
 
 // Draw cycle
@@ -316,6 +322,7 @@ void readSessionConfig() {
   isSoundEnabled = Boolean.valueOf(properties.getProperty("session.isSoundEnabled", "true"));
   isAnnounceLevels = Boolean.valueOf(properties.getProperty("session.isAnnounceLevels", "true"));
   wpmReportingPeriod = Integer.valueOf(properties.getProperty("session.wpmReportingPeriod", "" + 60));
+  isWordDictationEnabled = Boolean.valueOf(properties.getProperty("session.isWordDictationEnabled", "false"));
 }
 
 // Automatically find Plover log file path
@@ -415,6 +422,11 @@ void checkBuffer(boolean forceNextWord) {
     checkLevelUp();
     currentWordIndex = nextWordsBuffer.getNextWordIndex();
     updateWorstWord();
+
+    // If word dictation is enabled, TTS current word
+    if (isWordDictationEnabled) {
+      sayCurrentWord();
+    }
   }
 }
 
@@ -478,6 +490,12 @@ void announceCurrentLevel() {
     Speaker speaker = new Speaker("Level " + currentLevel); 
     speaker.start();
   }
+}
+
+// Announce current word
+void sayCurrentWord() {
+  Speaker speaker = new Speaker(dictionary.get(currentWordIndex).word);
+  speaker.start();
 }
 
 // Get total unlocked words less blacklisted ones
