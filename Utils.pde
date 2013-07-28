@@ -203,7 +203,6 @@ public class Utils {
   }
 
   // Format strokes and multiple strokes for a single word.
-  // Not used in current version.
   String getStroke(String line, int start, int end) {
     String result = "";
     String strokeLine = line.substring(start, end);

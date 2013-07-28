@@ -34,6 +34,9 @@ boolean isSoundEnabled;
 boolean isAnnounceLevels;
 int wpmReportingPeriod;
 boolean isWordDictationEnabled;
+boolean showKeyboard;
+boolean showKeyboardQwerty;
+boolean showKeyboardChord;
 
 // Contains various helper methods
 Utils utils = new Utils();
@@ -55,6 +58,9 @@ String logFilePath;
 String lesDictionaryFilePath;
 String chdDictionaryFilePath;
 String blkDictionaryFilePath;
+
+// On-screen keyboard
+Keyboard keyboard;
 
 // Input buffer
 String buffer = "";
@@ -126,7 +132,7 @@ boolean debug = false;
  * ---------------------
  */
 int frameSizeX = 700;
-int frameSizeY = 280;
+int frameSizeY = 480;
 int defaultFontSize = 20;
 int mainTextFontSize = 24;
 int baseX = 60;
@@ -156,6 +162,8 @@ int worstWordWpmX = baseX + 120;
 int worstWordWpmY = baseY + 200;
 int worstWordX = baseX + 270;
 int worstWordY = baseY + 200;
+int keyboardX = baseX - 10;
+int keyboardY = baseY + 230;
 
 // Session setup
 void setup() {
@@ -187,13 +195,17 @@ void setup() {
   nextWordsBuffer = new NextWordsBuffer(frameSizeX - nextWordX);
   currentWordIndex = nextWordsBuffer.getCurrentWordIndex();
 
+  // Initialize on-screen keyboard
+  keyboard = new Keyboard(keyboardX, keyboardY, showKeyboardQwerty);
+
   // Configure display size
   size(frameSizeX, frameSizeY);
 
-  // Paint background and show text info
+  // Paint background, show text info and draw keyboard
   background(25);
   Stroke stroke = new Stroke();
   showTextInfo(stroke);
+  drawKeyboard();
 
   // If word dictation is enabled, TTS the first word
   if (isWordDictationEnabled) {
@@ -239,9 +251,10 @@ void draw() {
   // Check if input buffer matches and possibly advance to the next word
   checkBuffer(false);
 
-  // Paint background and show text info
+  // Paint background, show text info and draw keyboard
   background(25);
   showTextInfo(stroke == null ? previousStroke : stroke);
+  drawKeyboard();
 }
 
 // Check for released keys and update corresponding state
@@ -323,6 +336,9 @@ void readSessionConfig() {
   isAnnounceLevels = Boolean.valueOf(properties.getProperty("session.isAnnounceLevels", "true"));
   wpmReportingPeriod = Integer.valueOf(properties.getProperty("session.wpmReportingPeriod", "" + 60));
   isWordDictationEnabled = Boolean.valueOf(properties.getProperty("session.isWordDictationEnabled", "false"));
+  showKeyboard = Boolean.valueOf(properties.getProperty("session.showKeyboard", "true"));
+  showKeyboardQwerty = Boolean.valueOf(properties.getProperty("session.showKeyboardQwerty", "true"));
+  showKeyboardChord = Boolean.valueOf(properties.getProperty("session.showKeyboardChord", "true"));
 }
 
 // Automatically find Plover log file path
@@ -362,6 +378,21 @@ void blacklistCurrentWord() {
 // Returns time elapsed from lesson start time in milliseconds
 long getElapsedTime() {
   return isLessonPaused ? (lastPauseTime - lessonStartTime) : (System.currentTimeMillis() - lessonStartTime);
+}
+
+// Draw keyboard
+void drawKeyboard() {
+  if (!showKeyboard) {
+    return;
+  }
+
+  // If show chord is enabled, show the first chord
+  if (showKeyboardChord) {
+    String[] chords = dictionary.get(currentWordIndex).stroke.split("/");
+    keyboard.draw(chords[0]);
+  } else {
+    keyboard.draw("-");
+  }
 }
 
 // Display all text info shown in StenoTutor window

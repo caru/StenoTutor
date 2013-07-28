@@ -19,7 +19,7 @@ Installation
 * Make sure the a recent version of Java is installed
 * Download [the repository zip file](https://github.com/caru/StenoTutor/archive/master.zip) in a directory of your choice.
 * Extract the folder corresponding to your system on your hard drive. For example, if you use Linux 32-bit, extract the folder named "application.linux32/"
-* Optionally tweak session.properties in "data/" subdirectory.
+* Optionally tweak data/session.properties to customize the lesson.
 * Run Plover (it must be version 2.4+). It must be running and enabled to properly capture its translated output.
 
 1. Linux - 
@@ -37,8 +37,9 @@ Follow readme.txt
 Features
 --------
 * Smart word selection, slower-typed words show up more often.
-* Optional basic Word dictation via speech synthesis
-* Speech syntesis powered stats and new level announcements
+* Optional basic Word dictation via speech synthesis, can be enabled in data/session.properties.
+* Speech syntesis powered stats and new level announcements, can be disabled.
+* QWERTY/steno on-screen keyboard, with next chord highlighting (currently only monochrome and only shows first chord for words that require multiple strokes). You can disable on-screen keyboard, querty keys and next chord highlighting.
 * Blacklist specific words (press CONTROL to blacklist the current word), which is saved on disk at each new addition.
 * Pause/resume current lesson with TAB key. You can resume with any key or chord, and the stroke will be printed in the input buffer.
 * Display: next chord, next word, input buffer, input chord, current word last-x-average wpm, session wpm, level, timer, total unlocked words, worst word and worst word WPM.
@@ -47,19 +48,19 @@ Features
 * Custom lessons can be created in "data/lesson/" directory.
 * Session parameters can be customized in "data/session.properties".
 * Errors must be manually deleted by the student with '*' key. This allows StenoTutor to provide an experience more similar to real world typing.
-* Option to pre-compute and show multiple words at a time, to provide a typing experience similar to many online multiplayer typing games and more similar to real world typing. You can configure this in session.properties, property name session.isSingleWordBuffer. It defaults to false, that is multiple words per line.
+* Option to pre-compute and show multiple words at a time, to provide a typing experience similar to many online multiplayer typing games and more similar to real world typing. It is configurable. It defaults to multiple words per line.
 * When leveling up, the new level is announced with speech synthesis
 
 Known Bugs
 ----------
+* Next chord highlighting currently shows only first chord for words that require multiple strokes.
 * There is no check for the completion of the lesson dictionary, so there are no greetings yet and there may be errors too.
 
 Planned Features and Future Enhancements
 ----------------------------------------
-* QWERTY/steno on-screen keyboard
-* Highlight next chord on keyboard and color highlighting as well.
+* Color coded highlighting of next chord.
 * Run StenoTutor commands from input buffer
-* GUI interface, eg: buttons
+* GUI interface, eg: buttons and/or menus
 * Change lesson format to something more convenient, eg: Plover dictionary format
 * Show worst 5 words and their average WPM
 * Alphabet training mode
@@ -83,7 +84,9 @@ Changelog
 ---------
 
 *Version 0.0.6*
-* Added optional text-to-speech word dictation
+* Added on-screen keyboard with next chord highligthing. You can optionally disable on-screen keyboard, querty keys and next chord highlighting.
+* Added optional text-to-speech word dictation, can be enabled in data/session.properties. Default: disabled.
+* Lot of refactored code, now it's much more readable.
 
 *Version 0.0.5*
 * Word blacklisting is now disabled if the lesson is paused, because that caused issues on word stats
