@@ -212,7 +212,7 @@ public class NextWordsBuffer {
       int index = nextLineWords.get(i);
       String word = dictionary.get(index).word;
       text(word, currentX, y + mainTextFontSize);
-      if (i == highlightedWordIndex) fill(isLessonPaused ? 200 : 250);
+      fill(isLessonPaused ? 200 : 250);
       currentX += textWidth(word + " ");
     }
   }
