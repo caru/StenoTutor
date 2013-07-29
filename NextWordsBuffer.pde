@@ -32,7 +32,7 @@ public class NextWordsBuffer {
   }
 
   // Go to last item in the list
-  void listEnd() {
+  void goToListEnd() {
     highlightedWordIndex = nextWords.size() - 1;
   }
 

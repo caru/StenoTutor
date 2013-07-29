@@ -370,7 +370,7 @@ void blacklistCurrentWord() {
     while (wordsBlacklist.contains(dictionary.get(startBaseWords + unlockedWords - 1).word)) unlockedWords++;
 
     // Clear and refresh next words buffer
-    nextWordsBuffer.listEnd();
+    nextWordsBuffer.goToListEnd();
     checkBuffer(true);
   }
 }
