@@ -86,7 +86,7 @@ In the future, it may be needed or just convenient to refactor StenoTutor to a s
 Changelog
 ---------
 
-*Version 0.0.6*
+*Version 0.1.0*
 * Added on-screen keyboard with next chord highligthing. You can optionally disable on-screen keyboard, querty keys and next chord highlighting.
 * Added optional text-to-speech word dictation, can be enabled in data/session.properties. Default: disabled.
 * Lot of refactored code, now it's much more readable.
