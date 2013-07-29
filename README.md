@@ -18,7 +18,7 @@ Installation
 
 * Make sure the a recent version of Java is installed
 * Download [the repository zip file](https://github.com/caru/StenoTutor/archive/master.zip) in a directory of your choice.
-* Extract the folder corresponding to your system on your hard drive. For example, if you use Linux 32-bit, extract the folder named "application.linux32/"
+* Extract the folder corresponding to your system on your hard drive. For example, if you use Linux 32-bit, extract the folder named "application.linux32/". You can optionally rename the folder.
 * Optionally tweak data/session.properties to customize the lesson.
 * Run Plover (it must be version 2.4+). It must be running and enabled to properly capture its translated output.
 
