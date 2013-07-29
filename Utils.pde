@@ -112,7 +112,7 @@ public class Utils {
       }
     }
     catch (Exception e) {
-      println("Error while reading blacklist file (this is fine if you don't have blacklisted words):" + e.getMessage());
+      println("Warning: " + e.getMessage());
     }
     if (blkReader != null) {
       try {
