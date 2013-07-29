@@ -49,6 +49,7 @@ Features
 * Session parameters can be customized in "data/session.properties".
 * Errors must be manually deleted by the student with '*' key. This allows StenoTutor to provide an experience more similar to real world typing.
 * Option to pre-compute and show multiple words at a time, to provide a typing experience similar to many online multiplayer typing games and more similar to real world typing. It is configurable. It defaults to multiple words per line.
+* Dynamically show next line words as they are created to allow for a better typing flow at the end of lines
 * When leveling up, the new level is announced with speech synthesis
 
 Known Bugs
@@ -58,7 +59,6 @@ Known Bugs
 
 Planned Features and Future Enhancements
 ----------------------------------------
-* Dynamically show next line words as they are created to allow for a better typing flow at the end of lines
 * Color coded highlighting of next chord.
 * Change lesson format to something more convenient, eg: Plover dictionary format
 * Alphabet/Chord training mode (also for punctuation, special keys, shorcuts)
@@ -89,6 +89,7 @@ Changelog
 *Version 0.1.0*
 * Added on-screen keyboard with next chord highligthing. You can optionally disable on-screen keyboard, querty keys and next chord highlighting.
 * Added optional text-to-speech word dictation, can be enabled in data/session.properties. Default: disabled.
+* Dynamically show next line words as they are created to allow for a better typing flow at the end of lines
 * Lot of refactored code, now it's much more readable.
 
 *Version 0.0.5*
