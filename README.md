@@ -60,17 +60,17 @@ Planned Features and Future Enhancements
 ----------------------------------------
 * Dynamically show next line words as they are created to allow for a better typing flow at the end of lines
 * Color coded highlighting of next chord.
+* Change lesson format to something more convenient, eg: Plover dictionary format
+* Alphabet/Chord training mode (also for punctuation, special keys, shorcuts)
 * Run StenoTutor commands from input buffer
 * GUI interface, eg: buttons and/or menus
-* Change lesson format to something more convenient, eg: Plover dictionary format
 * Add a command to repeat current word with text-to-speech
-* Show worst 5 words and their average WPM
-* Alphabet training mode
 * Sentence training mode
 * Options to show/hide the various info and features
 * Save session statistics in txt files
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
 * Font colors and GUI colors configuration file
+* Show worst 5 words and their average WPM
 
 How to build StenoTutor (for developers)
 ----------------------------------------
