@@ -130,7 +130,6 @@ public class NextWordsBuffer {
       if (i == highlightedWordIndex) {
         noFill();
         stroke(250, 200, 100);
-        //rect(currentX - (textWidth(" ") / 2), y - mainTextFontSize, textWidth(word + " "), mainTextFontSize + 7, 5);
         line(currentX, y + mainTextFontSize / 5, currentX + textWidth(word), y + mainTextFontSize / 5);
         fill(250, 200, 100);
       }
