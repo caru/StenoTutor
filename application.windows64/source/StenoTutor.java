@@ -279,10 +279,10 @@ public void draw() {
   drawKeyboard();
 }
 
-// Check for released keys and update corresponding state
-public void keyReleased() {
-  // Blacklist command
-  if (keyCode == CONTROL) ctrlKeyReleased = true;
+public void keyPressed() {
+  if (keyCode == BACKSPACE) {
+      if (isLessonStarted) buffer = buffer.substring(0, max(0, buffer.length() - 1));
+  }
 
   // Input buffer update.
   if (key != CODED) {
@@ -291,13 +291,11 @@ public void keyReleased() {
       tabKeyReleased = true;
     }
 
-    switch(key) {
-    case BACKSPACE:
-      if (isLessonStarted) buffer = buffer.substring(0, max(0, buffer.length() - 1));
-      break;
+    switch (key) {
     case TAB:
       tabKeyReleased = true;
       break;
+    case BACKSPACE:
     case ESC:
     case DELETE:
     case ENTER:
@@ -307,6 +305,13 @@ public void keyReleased() {
       buffer += key;
     }
   }
+}
+
+
+// Check for released keys and update corresponding state
+public void keyReleased() {
+  // Blacklist command
+  if (keyCode == CONTROL) ctrlKeyReleased = true;
 }
 
 // Pause/resume the session
