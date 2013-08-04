@@ -174,7 +174,7 @@ public class NextWordsBuffer {
   long[] calculatePenaltyLimits() {
     long currentMinPenalty = 1000000000;
     long currentMaxPenalty = 0;
-    for (int i = 0; i < startBaseWords + unlockedWords - 1; i++) {
+    for (int i = 0; i < min(dictionary.size(), startBaseWords + unlockedWords); i++) {
       if (i == currentWordIndex || wordsBlacklist.contains(dictionary.get(i).word)) continue;
       long penalty = wordStats.get(i).getWordPenalty();
       if (currentMinPenalty > penalty) currentMinPenalty = penalty;
