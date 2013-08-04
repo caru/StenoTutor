@@ -552,3 +552,4 @@ void updateBuffer(Stroke stroke) {
   if (stroke.isDelete) buffer = buffer.substring(0, max(0, buffer.length() - stroke.word.length()));
   else buffer += stroke.word;
 }
+
