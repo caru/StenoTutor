@@ -87,6 +87,9 @@ In the future, it may be needed or just convenient to refactor StenoTutor to a s
 Changelog
 ---------
 
+*Version 0.1.3*
+* Fixed backspace bug on GNU/Linux 64 bit at the start of the lesson
+
 *Version 0.1.2*
 * Backspace now deletes a character when it's pressed rather than released
 * Characters are now detected on key press rather than key release
