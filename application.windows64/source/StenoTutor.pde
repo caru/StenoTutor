@@ -259,7 +259,7 @@ void draw() {
 
 void keyPressed() {
   if (keyCode == BACKSPACE) {
-      if (isLessonStarted) buffer = buffer.substring(0, max(0, buffer.length() - 1));
+      buffer = buffer.substring(0, max(0, buffer.length() - 1));
   }
 
   // Input buffer update.
