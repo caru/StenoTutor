@@ -65,8 +65,9 @@ Planned Features and Future Enhancements
 * Run StenoTutor commands from input buffer
 * GUI interface, eg: buttons and/or menus
 * Add a command to repeat current word with text-to-speech
+* Option to save session progress between different sessions
 * Sentence training mode
-* Options to show/hide the various info and features
+* More options to show/hide the various info and features
 * Save session statistics in txt files
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
 * Font colors and GUI colors configuration file
