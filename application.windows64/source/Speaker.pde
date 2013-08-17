@@ -28,12 +28,9 @@ public class Speaker extends Thread {
   TTS tts;
 
   // Set statement and initialize TTS wrapper
-  Speaker(String statement) {
+  Speaker(String statement, TTS tts) {
     this.statement = statement;
-
-    // Initialize and configure speech synthesis
-    tts = new TTS();
-    tts.setPitchRange(7);
+    this.tts = tts;
   }
 
   // Read the statement once
@@ -41,4 +38,3 @@ public class Speaker extends Thread {
     tts.speak(statement);
   }
 }
-

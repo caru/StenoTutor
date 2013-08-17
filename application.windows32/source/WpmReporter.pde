@@ -21,8 +21,12 @@
 public class WpmReporter extends Thread {
   long period;
 
-  WpmReporter(long period) {
+  // Speech synthesis wrapper
+  TTS tts;
+
+  WpmReporter(long period, TTS tts) {
     this.period = period;
+    this.tts = tts;
   }
 
   // Wait period, then if lesson is not paused announce WPM
@@ -35,7 +39,7 @@ public class WpmReporter extends Thread {
         break;
       }
       if (!isLessonPaused) {
-        Speaker speaker = new Speaker((int) getAverageWpm() + " words per minute.");
+        Speaker speaker = new Speaker((int) getAverageWpm() + " words per minute.", tts);
         speaker.start();
       }
     }

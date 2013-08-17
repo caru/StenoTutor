@@ -90,6 +90,9 @@ String buffer = "";
 // Target line buffer
 NextWordsBuffer nextWordsBuffer;
 
+// Speech synthesis wrapper
+TTS tts;
+
 // Dictionary of current lesson
 ArrayList<Word> dictionary;
 
@@ -223,6 +226,10 @@ public void setup() {
   // Configure display size
   size(frameSizeX, frameSizeY);
 
+  // Initialize and configure speech synthesis
+  tts = new TTS();
+  tts.setPitchRange(7);
+
   // Paint background, show text info and draw keyboard
   background(25);
   Stroke stroke = new Stroke();
@@ -253,21 +260,22 @@ public void draw() {
 
   // If the stroke is not null, store it
   if (stroke != null) {
-    // If the lesson just started, add word start avg time. This ensures that
-    // the first word doesn't start with extremely low penalty.
-    if (!isLessonStarted) {
-      isLessonStarted = true;
-      lessonStartTime = System.currentTimeMillis();
-      lastTypedWordTime = lessonStartTime - ((long) 60000.0f / wordStartAvgWpm);
-      // Announce Level 0
-      announceCurrentLevel();
-      // If WPM reporting is enabled, start it
-      if (isSoundEnabled && wpmReportingPeriod > 0) {
-        WpmReporter wpmReporter = new WpmReporter((long) wpmReportingPeriod * 1000);
-        wpmReporter.start();
-      }
-    }
     previousStroke = stroke;
+  }
+
+  // If the lesson just started, add word start avg time. This ensures that
+  // the first word doesn't start with extremely low penalty.
+  if (!isLessonStarted && buffer.length() > 0) {
+    isLessonStarted = true;
+    lessonStartTime = System.currentTimeMillis();
+    lastTypedWordTime = lessonStartTime - ((long) 60000.0f / wordStartAvgWpm);
+    // Announce Level 0
+    announceCurrentLevel();
+    // If WPM reporting is enabled, start it
+    if (isSoundEnabled && wpmReportingPeriod > 0) {
+      WpmReporter wpmReporter = new WpmReporter((long) wpmReportingPeriod * 1000, tts);
+      wpmReporter.start();
+    }
   }
 
   // Check if input buffer matches and possibly advance to the next word
@@ -545,14 +553,14 @@ public void levelUp() {
 // Announce current level
 public void announceCurrentLevel() {
   if (isSoundEnabled && isAnnounceLevels) {
-    Speaker speaker = new Speaker("Level " + currentLevel); 
+    Speaker speaker = new Speaker("Level " + currentLevel, tts);
     speaker.start();
   }
 }
 
 // Announce current word
 public void sayCurrentWord() {
-  Speaker speaker = new Speaker(dictionary.get(currentWordIndex).word);
+  Speaker speaker = new Speaker(dictionary.get(currentWordIndex).word, tts);
   speaker.start();
 }
 
@@ -1018,12 +1026,9 @@ public class Speaker extends Thread {
   TTS tts;
 
   // Set statement and initialize TTS wrapper
-  Speaker(String statement) {
+  Speaker(String statement, TTS tts) {
     this.statement = statement;
-
-    // Initialize and configure speech synthesis
-    tts = new TTS();
-    tts.setPitchRange(7);
+    this.tts = tts;
   }
 
   // Read the statement once
@@ -1031,7 +1036,6 @@ public class Speaker extends Thread {
     tts.speak(statement);
   }
 }
-
 /*
  *   This file is part of StenoTutor.
  *
@@ -1372,8 +1376,12 @@ public class WordStats {
 public class WpmReporter extends Thread {
   long period;
 
-  WpmReporter(long period) {
+  // Speech synthesis wrapper
+  TTS tts;
+
+  WpmReporter(long period, TTS tts) {
     this.period = period;
+    this.tts = tts;
   }
 
   // Wait period, then if lesson is not paused announce WPM
@@ -1386,7 +1394,7 @@ public class WpmReporter extends Thread {
         break;
       }
       if (!isLessonPaused) {
-        Speaker speaker = new Speaker((int) getAverageWpm() + " words per minute.");
+        Speaker speaker = new Speaker((int) getAverageWpm() + " words per minute.", tts);
         speaker.start();
       }
     }

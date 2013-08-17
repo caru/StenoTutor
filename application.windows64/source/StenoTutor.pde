@@ -68,6 +68,9 @@ String buffer = "";
 // Target line buffer
 NextWordsBuffer nextWordsBuffer;
 
+// Speech synthesis wrapper
+TTS tts;
+
 // Dictionary of current lesson
 ArrayList<Word> dictionary;
 
@@ -201,6 +204,10 @@ void setup() {
   // Configure display size
   size(frameSizeX, frameSizeY);
 
+  // Initialize and configure speech synthesis
+  tts = new TTS();
+  tts.setPitchRange(7);
+
   // Paint background, show text info and draw keyboard
   background(25);
   Stroke stroke = new Stroke();
@@ -231,21 +238,22 @@ void draw() {
 
   // If the stroke is not null, store it
   if (stroke != null) {
-    // If the lesson just started, add word start avg time. This ensures that
-    // the first word doesn't start with extremely low penalty.
-    if (!isLessonStarted) {
-      isLessonStarted = true;
-      lessonStartTime = System.currentTimeMillis();
-      lastTypedWordTime = lessonStartTime - ((long) 60000.0 / wordStartAvgWpm);
-      // Announce Level 0
-      announceCurrentLevel();
-      // If WPM reporting is enabled, start it
-      if (isSoundEnabled && wpmReportingPeriod > 0) {
-        WpmReporter wpmReporter = new WpmReporter((long) wpmReportingPeriod * 1000);
-        wpmReporter.start();
-      }
-    }
     previousStroke = stroke;
+  }
+
+  // If the lesson just started, add word start avg time. This ensures that
+  // the first word doesn't start with extremely low penalty.
+  if (!isLessonStarted && buffer.length() > 0) {
+    isLessonStarted = true;
+    lessonStartTime = System.currentTimeMillis();
+    lastTypedWordTime = lessonStartTime - ((long) 60000.0 / wordStartAvgWpm);
+    // Announce Level 0
+    announceCurrentLevel();
+    // If WPM reporting is enabled, start it
+    if (isSoundEnabled && wpmReportingPeriod > 0) {
+      WpmReporter wpmReporter = new WpmReporter((long) wpmReportingPeriod * 1000, tts);
+      wpmReporter.start();
+    }
   }
 
   // Check if input buffer matches and possibly advance to the next word
@@ -523,14 +531,14 @@ void levelUp() {
 // Announce current level
 void announceCurrentLevel() {
   if (isSoundEnabled && isAnnounceLevels) {
-    Speaker speaker = new Speaker("Level " + currentLevel); 
+    Speaker speaker = new Speaker("Level " + currentLevel, tts);
     speaker.start();
   }
 }
 
 // Announce current word
 void sayCurrentWord() {
-  Speaker speaker = new Speaker(dictionary.get(currentWordIndex).word);
+  Speaker speaker = new Speaker(dictionary.get(currentWordIndex).word, tts);
   speaker.start();
 }
 
