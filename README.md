@@ -61,6 +61,8 @@ Planned Features and Future Enhancements
 ----------------------------------------
 * Color coded highlighting of next chord.
 * Change lesson format to something more convenient, eg: Plover dictionary format
+* Show alternative definitions from Plover dictionary and common words category dictionary as discussed here: https://groups.google.com/d/msg/ploversteno/XUZezyNPgM0/28wsJfqqLrUJ
+* Histogram mode as discussed here: https://groups.google.com/d/msg/ploversteno/pFTYmNDPYSs/bQk2Pe-2CJUJ
 * Alphabet/Chord training mode (also for punctuation, special keys, shorcuts)
 * Run StenoTutor commands from input buffer
 * GUI interface, eg: buttons and/or menus
@@ -70,6 +72,7 @@ Planned Features and Future Enhancements
 * More options to show/hide the various info and features
 * Save session statistics in txt files
 * Accuracy recording, including average session accuracy, accuracy level up limits, average accuracy per word and a mixed speed/accuracy based word selection
+* Global high score system support (a promising free high-scores framework is [https://github.com/openkit])
 * Font colors and GUI colors configuration file
 * Show worst 5 words and their average WPM
 
