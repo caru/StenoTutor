@@ -50,7 +50,6 @@ Features
 * Errors must be manually deleted by the student with '*' key. This allows StenoTutor to provide an experience more similar to real world typing.
 * Option to pre-compute and show multiple words at a time, to provide a typing experience similar to many online multiplayer typing games and more similar to real world typing. It is configurable. It defaults to multiple words per line.
 * Dynamically show next line words as they are created to allow for a better typing flow at the end of lines
-* When leveling up, the new level is announced with speech synthesis
 
 Known Bugs
 ----------
@@ -89,6 +88,10 @@ In the future, it may be needed or just convenient to refactor StenoTutor to a s
 
 Changelog
 ---------
+
+*Version 0.1.4*
+* Fixed two bugs which caused OutOfMemory error
+* Text-to-speech sounds now never overlap, so they can be left all active
 
 *Version 0.1.3*
 * Fixed backspace bug on GNU/Linux 64 bit at the start of the lesson
