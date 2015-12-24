@@ -89,6 +89,9 @@ ArrayList<String> wordsBlacklist = new ArrayList<String>();
 // Current level
 int currentLevel = 0;
 
+// Lesson completed
+boolean isLessonCompleted = false;
+
 // Unlocked words counter
 int unlockedWords = 0;
 
@@ -513,7 +516,13 @@ void checkLevelUp() {
 // Level up, unlock new words
 void levelUp() {
   int totalWords = startBaseWords + unlockedWords;
-  if (totalWords == dictionary.size()) return;
+  if (totalWords == dictionary.size()) {
+    if(isLessonCompleted == false) {
+      announceLessonCompleted();
+      isLessonCompleted = true;
+    }
+    return;
+  }
   int i = totalWords;
   unlockedWords += incrementWords;
   if(startBaseWords + unlockedWords > dictionary.size()) unlockedWords = dictionary.size() - startBaseWords;
@@ -528,7 +537,6 @@ void levelUp() {
 
   // Announce current level
   announceCurrentLevel();
-  if (totalWords == dictionary.size())
 }
 
 // Announce current level
