@@ -513,8 +513,10 @@ void checkLevelUp() {
 // Level up, unlock new words
 void levelUp() {
   int totalWords = startBaseWords + unlockedWords;
+  if (totalWords == dictionary.size()) return;
   int i = totalWords;
   unlockedWords += incrementWords;
+  if(startBaseWords + unlockedWords > dictionary.size()) unlockedWords = dictionary.size() - startBaseWords;
   while (totalWords < startBaseWords + unlockedWords && i < dictionary.size()) {
     if (wordsBlacklist.contains(dictionary.get(i).word.trim())) {
       unlockedWords++;
@@ -526,12 +528,21 @@ void levelUp() {
 
   // Announce current level
   announceCurrentLevel();
+  if (totalWords == dictionary.size())
 }
 
 // Announce current level
 void announceCurrentLevel() {
   if (isSoundEnabled && isAnnounceLevels) {
     Speaker speaker = new Speaker("Level " + currentLevel, tts);
+    speaker.start();
+  }
+}
+
+// Announce current level
+void announceLessonCompleted() {
+  if (isSoundEnabled && isAnnounceLevels) {
+    Speaker speaker = new Speaker("Lesson completed", tts);
     speaker.start();
   }
 }
